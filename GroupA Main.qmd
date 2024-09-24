@@ -33,6 +33,11 @@ Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_varia
   print(num_variables)
   print(cat_variables)
 }
+```
 
+Showing exception cases:
+```{r}
+Pums_API_Query(2009)
+Pums_API_Query(2012)  
 ```
 
