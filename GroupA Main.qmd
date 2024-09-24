@@ -1,8 +1,38 @@
 ---
-title: "ST558 Project 1 Group A"
+title: "ST558 Project 1: Group A"
 author: "Eric Song & Jay Thakur"
 format: html
 editor: visual
 ---
 
-Test
+*Loading required libraries, include = FALSE.*
+```{r, include=FALSE}
+library(httr)
+library(tidycensus)
+library(dplyr)
+library(jsonlite)
+```
+
+
+#API Call
+
+###todo: append variables to api url
+
+```{r}
+Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="All",Opt_subset){
+  #Automatically capitalize our numeric and categorical arguments
+  num_variables<-toupper(num_variables)
+  cat_variables<-toupper(cat_variables)
+  #Base URL w/ Year for API Call
+  base_pums_url <-paste("https://api.census.gov/data/",year,"/acs/acs1/pums",sep="")
+  #Year Range Check
+  if (year < 2010 | year > 2022){
+    stop("Invalid Year.  Acceptable year range: 2010-2022.")}
+  #Just a test: delete when complete
+  paste(base_pums_url)
+  print(num_variables)
+  print(cat_variables)
+}
+
+```
+
