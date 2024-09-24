@@ -6,12 +6,12 @@ editor: visual
 ---
 
 *Loading required libraries, include = FALSE.*
+
 ```{r, include=FALSE}
 library(httr)
 library(tidycensus)
 library(jsonlite)
 ```
-
 
 #API Call
 
@@ -26,7 +26,7 @@ Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_varia
   base_pums_url <-paste("https://api.census.gov/data/",year,"/acs/acs1/pums",sep="")
   #Year Range Check
   if (year < 2010 | year > 2022){
-    stop("Invalid Year.  Acceptable year range: 2010-2022.")}
+    print("Invalid Year.  Acceptable year range: 2010-2022.")}
   #Just a test: delete when complete
   paste(base_pums_url)
   print(num_variables)
@@ -35,8 +35,8 @@ Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_varia
 ```
 
 Showing exception cases:
-```{r}
+
+```{r, echo=TRUE}
 Pums_API_Query(2009)
 Pums_API_Query(2012)  
 ```
-

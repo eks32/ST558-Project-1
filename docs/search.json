@@ -2,8 +2,8 @@
   {
     "objectID": "GroupA Main.html",
     "href": "GroupA Main.html",
-    "title": "ST558 Project 1 Group A",
+    "title": "ST558 Project 1: Group A",
     "section": "",
-    "text": "Test"
+    "text": "Loading required libraries, include = FALSE.\n#API Call\n###todo: append variables to api url\n\nPums_API_Query &lt;- function(year=2022, num_variables =c(\"AGEP\",\"PWGTP\"),cat_variables=\"SEX\",geography=\"All\",Opt_subset){\n  #Automatically capitalize our numeric and categorical arguments\n  num_variables&lt;-toupper(num_variables)\n  cat_variables&lt;-toupper(cat_variables)\n  #Base URL w/ Year for API Call\n  base_pums_url &lt;-paste(\"https://api.census.gov/data/\",year,\"/acs/acs1/pums\",sep=\"\")\n  #Year Range Check\n  if (year &lt; 2010 | year &gt; 2022){\n    print(\"Invalid Year.  Acceptable year range: 2010-2022.\")}\n  #Just a test: delete when complete\n  paste(base_pums_url)\n  print(num_variables)\n  print(cat_variables)\n}\n\nShowing exception cases:\n\nPums_API_Query(2009)\n\n[1] \"Invalid Year.  Acceptable year range: 2010-2022.\"\n[1] \"AGEP\"  \"PWGTP\"\n[1] \"SEX\"\n\nPums_API_Query(2012)  \n\n[1] \"AGEP\"  \"PWGTP\"\n[1] \"SEX\""
   }
 ]
