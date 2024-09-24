@@ -9,7 +9,6 @@ editor: visual
 ```{r, include=FALSE}
 library(httr)
 library(tidycensus)
-library(dplyr)
 library(jsonlite)
 ```
 
@@ -18,7 +17,7 @@ library(jsonlite)
 
 ###todo: append variables to api url
 
-```{r}
+```{r, include=TRUE}
 Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="All",Opt_subset){
   #Automatically capitalize our numeric and categorical arguments
   num_variables<-toupper(num_variables)
