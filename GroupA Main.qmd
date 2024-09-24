@@ -13,9 +13,9 @@ library(tidycensus)
 library(jsonlite)
 ```
 
-#API Call
+# API Call
 
-###todo: append variables to api url
+### todo: append variables to api url
 
 ```{r, include=TRUE}
 Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="All",Opt_subset){
@@ -28,7 +28,7 @@ Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_varia
   if (year < 2010 | year > 2022){
     print("Invalid Year.  Acceptable year range: 2010-2022.")}
   #Just a test: delete when complete
-  paste(base_pums_url)
+  print(base_pums_url)
   print(num_variables)
   print(cat_variables)
 }
