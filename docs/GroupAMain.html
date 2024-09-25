@@ -143,53 +143,59 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><em>Loading required libraries, include = FALSE.</em></p>
 <section id="api-call" class="level1">
 <h1>API Call</h1>
-<section id="api-call-1" class="level3">
-<h3 class="anchored" data-anchor-id="api-call-1">api call</h3>
+<section id="todo" class="level3">
+<h3 class="anchored" data-anchor-id="todo">TODO:</h3>
+<p>Data processing: Data cleaning: Subsetting data. Will add narrative on sunday.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Pums_APIdata <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">year=</span><span class="dv">2022</span>, <span class="at">num_variables =</span><span class="fu">c</span>(<span class="st">"AGEP"</span>,<span class="st">"PWGTP"</span>),<span class="at">cat_variables=</span><span class="st">"SEX"</span>,<span class="at">geography=</span><span class="st">"ALL"</span>,Opt_subset){</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   <span class="co">#Year Range Check</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (year <span class="sc">&lt;</span> <span class="dv">2010</span> <span class="sc">|</span> year <span class="sc">&gt;</span> <span class="dv">2022</span>){</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">"Invalid Year.  Acceptable year range: 2010-2022."</span>)}</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#TODO: add error checking for numeric/categorical/geography</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#API key here:</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  API_key<span class="ot">&lt;-</span><span class="st">"2b989c8e8efa3003c17e6eb0ca728a968e04a441"</span> </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Automatically capitalize our variables</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  num_variables<span class="ot">&lt;-</span><span class="fu">toupper</span>(num_variables)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  cat_variables<span class="ot">&lt;-</span><span class="fu">toupper</span>(cat_variables)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  geography<span class="ot">&lt;-</span><span class="fu">toupper</span>(geography)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Adding num/cat variables to our url</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  variables_url<span class="ot">&lt;-</span><span class="fu">paste</span>(<span class="fu">c</span>(num_variables,cat_variables),<span class="at">collapse=</span><span class="st">","</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Base URL w/ year variable</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  base_pums_url <span class="ot">&lt;-</span><span class="fu">paste</span>(<span class="st">"https://api.census.gov/data/"</span>,year,<span class="st">"/acs/acs1/pums?get="</span>,variables_url,<span class="at">sep=</span><span class="st">""</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Adding geography to URL</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (geography <span class="sc">==</span> <span class="st">"ALL"</span>){</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (geography <span class="sc">==</span> <span class="st">"REGION"</span>){</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"&amp;for=region:*&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (geograph <span class="sc">==</span> <span class="st">"DIVISION"</span>){</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>      geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"for=division:*&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (geography <span class="sc">==</span> <span class="st">"STATE"</span>){</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>      geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"&amp;for=state:*&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="co">#API Fetch:</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  pums_fetch <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(geo_url)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Decoding data</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  pums_df <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(pums_fetch<span class="sc">$</span>content))</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  pums_tibble <span class="ot">&lt;-</span><span class="fu">as_tibble</span>(pums_df)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="co">#TODO: Clean data.  Fix column names etc...</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">"Invalid Year.  Acceptable year range: 2010-2022."</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>()</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#TODO: add error checking for numeric/categorical/geography</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#API key here:</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  API_key<span class="ot">&lt;-</span><span class="st">"2b989c8e8efa3003c17e6eb0ca728a968e04a441"</span> </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Automatically capitalize our variables</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  num_variables<span class="ot">&lt;-</span><span class="fu">toupper</span>(num_variables)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  cat_variables<span class="ot">&lt;-</span><span class="fu">toupper</span>(cat_variables)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  geography<span class="ot">&lt;-</span><span class="fu">toupper</span>(geography)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Adding num/cat variables to our url</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  variables_url<span class="ot">&lt;-</span><span class="fu">paste</span>(<span class="fu">c</span>(num_variables,cat_variables),<span class="at">collapse=</span><span class="st">","</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Base URL w/ year variable</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  base_pums_url <span class="ot">&lt;-</span><span class="fu">paste</span>(<span class="st">"https://api.census.gov/data/"</span>,year,<span class="st">"/acs/acs1/pums?get="</span>,variables_url,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Adding geography to URL</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (geography <span class="sc">==</span> <span class="st">"ALL"</span>){</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (geography <span class="sc">==</span> <span class="st">"REGION"</span>){</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>      geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"&amp;for=region:*&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (geograph <span class="sc">==</span> <span class="st">"DIVISION"</span>){</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>      geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"for=division:*&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (geography <span class="sc">==</span> <span class="st">"STATE"</span>){</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>      geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"&amp;for=state:*&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">#API Fetch:</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  pums_fetch <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(geo_url)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Decoding data</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  pums_df <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(pums_fetch<span class="sc">$</span>content))</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  pums_tibble <span class="ot">&lt;-</span><span class="fu">as_tibble</span>(pums_df)</span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="co">#change return to cleaned dataframe.</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(pums_tibble)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="co">#TODO: Clean data.  Fix column names etc...</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="co">#TODO: Subset data for geography</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Just a test: delete later</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(geo_url)</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(num_variables)</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(cat_variables)</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="co">#change return to cleaned dataframe.</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(pums_tibble)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Diagonostics: delete later</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(geo_url)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(num_variables)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(cat_variables)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(pums_tibble)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(pums_df)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Testing exception cases:</p>
 <div class="cell">
@@ -197,28 +203,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Invalid Year.  Acceptable year range: 2010-2022."</code></pre>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Pums_APIdata</span>(<span class="dv">2012</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
 `.name_repair` is omitted as of tibble 2.0.0.
 ℹ Using compatibility `.name_repair`.</code></pre>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 25,894 × 4
-   V1    V2    V3    V4   
-   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
- 1 AGEP  PWGTP SEX   SCHL 
- 2 76    72    1     24   
- 3 37    80    1     24   
- 4 59    67    2     24   
- 5 50    129   1     24   
- 6 45    57    2     24   
- 7 67    108   2     24   
- 8 73    70    1     24   
- 9 66    77    2     24   
-10 51    111   1     24   
-# ℹ 25,884 more rows</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Pums_APIdata</span>(<span class="dv">2012</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 27,782 × 4
    V1    V2    V3    V4   

@@ -16,13 +16,19 @@ library(jsonlite)
 
 # API Call
 
-### api call
+### TODO: 
+Data processing: 
+Data cleaning:
+Subsetting data.
+Will add narrative on sunday.  
 
 ```{r}
 Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="ALL",Opt_subset){
    #Year Range Check
   if (year < 2010 | year > 2022){
-    print("Invalid Year.  Acceptable year range: 2010-2022.")}
+    print("Invalid Year.  Acceptable year range: 2010-2022.")
+    return()
+    }
   #TODO: add error checking for numeric/categorical/geography
   
   
@@ -53,15 +59,18 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   pums_tibble <-as_tibble(pums_df)
   
   #TODO: Clean data.  Fix column names etc...
+  #TODO: Subset data for geography
   
   
   #change return to cleaned dataframe.
   return(pums_tibble)
   
-  #Just a test: delete later
+  #Diagonostics: delete later
   print(geo_url)
   print(num_variables)
   print(cat_variables)
+  head(pums_tibble)
+  head(pums_df)
 }
 ```
 
