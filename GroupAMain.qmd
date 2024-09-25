@@ -5,9 +5,7 @@ format: html
 editor: visual
 ---
 
-
 *Loading required libraries, include = FALSE.*
-
 
 ```{r, include=FALSE}
 library(tidyverse)
@@ -16,13 +14,11 @@ library(tidycensus)
 library(jsonlite)
 ```
 
-
 # API Call
 
 ### api call
 
-
-```{r, include=TRUE}
+```{r}
 Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="ALL",Opt_subset){
    #Year Range Check
   if (year < 2010 | year > 2022){
@@ -56,6 +52,10 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   pums_df <- fromJSON(rawToChar(pums_fetch$content))
   pums_tibble <-as_tibble(pums_df)
   
+  #TODO: Clean data.  Fix column names etc...
+  
+  
+  #change return to cleaned dataframe.
   return(pums_tibble)
   
   #Just a test: delete later
@@ -65,12 +65,9 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
 }
 ```
 
-
 Testing exception cases:
-
 
 ```{r, echo=TRUE}
 Pums_APIdata(2009)
 Pums_APIdata(2012)  
 ```
-
