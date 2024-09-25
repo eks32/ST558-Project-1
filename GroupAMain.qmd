@@ -24,7 +24,12 @@ Will add narrative on sunday.
 
 ```{r}
 Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="ALL",Opt_subset){
-   #Year Range Check
+  #Automatically capitalize our variables
+  num_variables<-toupper(num_variables)
+  cat_variables<-toupper(cat_variables)
+  geography<-toupper(geography) 
+  
+  #Year Range Check
   if (year < 2010 | year > 2022){
     print("Invalid Year.  Acceptable year range: 2010-2022.")
     return()
@@ -34,26 +39,27 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   
   #API key here:
   API_key<-"2b989c8e8efa3003c17e6eb0ca728a968e04a441" 
-  #Automatically capitalize our variables
-  num_variables<-toupper(num_variables)
-  cat_variables<-toupper(cat_variables)
-  geography<-toupper(geography)
+  
+  
   #Adding num/cat variables to our url
   variables_url<-paste(c(num_variables,cat_variables),collapse=",")
+  
   #Base URL w/ year variable
   base_pums_url <-paste("https://api.census.gov/data/",year,"/acs/acs1/pums?get=",variables_url,sep="")
+  
   #Adding geography to URL
   if (geography == "ALL"){
-    geo_url <- paste(base_pums_url,"&SCHL=24&key=",API_key,sep="")}
+    full_url <- paste(base_pums_url,"&SCHL=24&key=",API_key,sep="")}
     else if (geography == "REGION"){
-      geo_url <- paste(base_pums_url,"&for=region:*&SCHL=24&key=",API_key,sep="")}
+      full_url <- paste(base_pums_url,"&for=region:*&SCHL=24&key=",API_key,sep="")}
     else if (geograph == "DIVISION"){
-      geo_url <- paste(base_pums_url,"for=division:*&SCHL=24&key=",API_key,sep="")}
+      full_url <- paste(base_pums_url,"for=division:*&SCHL=24&key=",API_key,sep="")}
     else if (geography == "STATE"){
-      geo_url <- paste(base_pums_url,"&for=state:*&SCHL=24&key=",API_key,sep="")}
+      full_url <- paste(base_pums_url,"&for=state:*&SCHL=24&key=",API_key,sep="")}
   
   #API Fetch:
-  pums_fetch <- httr::GET(geo_url)
+  pums_fetch <- httr::GET(full_url)
+  
   #Decoding data
   pums_df <- fromJSON(rawToChar(pums_fetch$content))
   pums_tibble <-as_tibble(pums_df)
@@ -61,20 +67,21 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   #TODO: Clean data.  Fix column names etc...
   #TODO: Subset data for geography
   
-  
-  #change return to cleaned dataframe.
-  return(pums_tibble)
-  
   #Diagonostics: delete later
-  print(geo_url)
+  print(paste("API URL:",full_url))
+  print("Numeric Variables:")
   print(num_variables)
+  print("Categorical Variables:")
   print(cat_variables)
-  head(pums_tibble)
-  head(pums_df)
+  print(paste("Geography:",geography))
+  
+  
+  #Returns tibble
+  return(pums_tibble)
 }
 ```
 
-Testing exception cases:
+Testing exception cases/output:
 
 ```{r, echo=TRUE}
 Pums_APIdata(2009)
