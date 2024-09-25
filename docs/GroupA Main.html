@@ -141,40 +141,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><em>Loading required libraries, include = FALSE.</em></p>
-<p>#API Call</p>
-<p>###todo: append variables to api url</p>
+<section id="api-call" class="level1">
+<h1>API Call</h1>
+<section id="todo-append-variables-to-api-url" class="level3">
+<h3 class="anchored" data-anchor-id="todo-append-variables-to-api-url">todo: append variables to api url</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Pums_API_Query <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">year=</span><span class="dv">2022</span>, <span class="at">num_variables =</span><span class="fu">c</span>(<span class="st">"AGEP"</span>,<span class="st">"PWGTP"</span>),<span class="at">cat_variables=</span><span class="st">"SEX"</span>,<span class="at">geography=</span><span class="st">"All"</span>,Opt_subset){</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Automatically capitalize our numeric and categorical arguments</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  num_variables<span class="ot">&lt;-</span><span class="fu">toupper</span>(num_variables)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  cat_variables<span class="ot">&lt;-</span><span class="fu">toupper</span>(cat_variables)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Base URL w/ Year for API Call</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  base_pums_url <span class="ot">&lt;-</span><span class="fu">paste</span>(<span class="st">"https://api.census.gov/data/"</span>,year,<span class="st">"/acs/acs1/pums"</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Year Range Check</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (year <span class="sc">&lt;</span> <span class="dv">2010</span> <span class="sc">|</span> year <span class="sc">&gt;</span> <span class="dv">2022</span>){</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">"Invalid Year.  Acceptable year range: 2010-2022."</span>)}</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Just a test: delete when complete</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(base_pums_url)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(num_variables)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(cat_variables)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Pums_API_Query <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">year=</span><span class="dv">2022</span>, <span class="at">num_variables =</span><span class="fu">c</span>(<span class="st">"AGEP"</span>,<span class="st">"PWGTP"</span>),<span class="at">cat_variables=</span><span class="st">"SEX"</span>,<span class="at">geography=</span><span class="st">"ALL"</span>,Opt_subset){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#API key here:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  API_key<span class="ot">&lt;-</span><span class="st">"2b989c8e8efa3003c17e6eb0ca728a968e04a441"</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Automatically capitalize our variables</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  num_variables<span class="ot">&lt;-</span><span class="fu">toupper</span>(num_variables)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  cat_variables<span class="ot">&lt;-</span><span class="fu">toupper</span>(cat_variables)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  geography<span class="ot">&lt;-</span><span class="fu">toupper</span>(geography)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Adding num/cat variables to our url</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  variables_url<span class="ot">&lt;-</span><span class="fu">paste</span>(num_variables,cat_variables,<span class="at">sep=</span><span class="st">","</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Base URL w/ year variable</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  base_pums_url <span class="ot">&lt;-</span><span class="fu">paste</span>(<span class="st">"https://api.census.gov/data/"</span>,year,<span class="st">"/acs/acs1/pums?get="</span>,variables_url,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Adding geography to URL</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (geography <span class="sc">==</span> <span class="st">"ALL"</span>){</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (geography <span class="sc">==</span> <span class="st">"REGION"</span>){</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"&amp;for=region:*&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (geograph <span class="sc">==</span> <span class="st">"DIVISION"</span>){</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"for=division:*&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (geography <span class="sc">==</span> <span class="st">"STATE"</span>){</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      geo_url <span class="ot">&lt;-</span> <span class="fu">paste</span>(base_pums_url,<span class="st">"&amp;for=state:*&amp;SCHL=24&amp;key="</span>,API_key,<span class="at">sep=</span><span class="st">""</span>)}</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Year Range Check</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (year <span class="sc">&lt;</span> <span class="dv">2010</span> <span class="sc">|</span> year <span class="sc">&gt;</span> <span class="dv">2022</span>){</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">"Invalid Year.  Acceptable year range: 2010-2022."</span>)}</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Just a test: delete when complete</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(geo_url)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(num_variables)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(cat_variables)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Showing exception cases:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Pums_API_Query</span>(<span class="dv">2009</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Invalid Year.  Acceptable year range: 2010-2022."
+[1] "https://api.census.gov/data/2009/acs/acs1/pums?get=AGEP,SEX&amp;SCHL=24&amp;key=2b989c8e8efa3003c17e6eb0ca728a968e04a441" 
+[2] "https://api.census.gov/data/2009/acs/acs1/pums?get=PWGTP,SEX&amp;SCHL=24&amp;key=2b989c8e8efa3003c17e6eb0ca728a968e04a441"
 [1] "AGEP"  "PWGTP"
 [1] "SEX"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Pums_API_Query</span>(<span class="dv">2012</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "AGEP"  "PWGTP"
+<pre><code>[1] "https://api.census.gov/data/2012/acs/acs1/pums?get=AGEP,SEX&amp;SCHL=24&amp;key=2b989c8e8efa3003c17e6eb0ca728a968e04a441" 
+[2] "https://api.census.gov/data/2012/acs/acs1/pums?get=PWGTP,SEX&amp;SCHL=24&amp;key=2b989c8e8efa3003c17e6eb0ca728a968e04a441"
+[1] "AGEP"  "PWGTP"
 [1] "SEX"</code></pre>
 </div>
 </div>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

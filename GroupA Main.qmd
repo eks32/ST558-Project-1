@@ -18,17 +18,32 @@ library(jsonlite)
 ### todo: append variables to api url
 
 ```{r, include=TRUE}
-Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="All",Opt_subset){
-  #Automatically capitalize our numeric and categorical arguments
+Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="ALL",Opt_subset){
+  #API key here:
+  API_key<-"2b989c8e8efa3003c17e6eb0ca728a968e04a441" 
+  #Automatically capitalize our variables
   num_variables<-toupper(num_variables)
   cat_variables<-toupper(cat_variables)
-  #Base URL w/ Year for API Call
-  base_pums_url <-paste("https://api.census.gov/data/",year,"/acs/acs1/pums",sep="")
+  geography<-toupper(geography)
+  #Adding num/cat variables to our url
+  variables_url<-paste(num_variables,cat_variables,sep=",")
+  #Base URL w/ year variable
+  base_pums_url <-paste("https://api.census.gov/data/",year,"/acs/acs1/pums?get=",variables_url,sep="")
+  #Adding geography to URL
+  if (geography == "ALL"){
+    geo_url <- paste(base_pums_url,"&SCHL=24&key=",API_key,sep="")}
+    else if (geography == "REGION"){
+      geo_url <- paste(base_pums_url,"&for=region:*&SCHL=24&key=",API_key,sep="")}
+    else if (geograph == "DIVISION"){
+      geo_url <- paste(base_pums_url,"for=division:*&SCHL=24&key=",API_key,sep="")}
+    else if (geography == "STATE"){
+      geo_url <- paste(base_pums_url,"&for=state:*&SCHL=24&key=",API_key,sep="")}
+  
   #Year Range Check
   if (year < 2010 | year > 2022){
     print("Invalid Year.  Acceptable year range: 2010-2022.")}
   #Just a test: delete when complete
-  print(base_pums_url)
+  print(geo_url)
   print(num_variables)
   print(cat_variables)
 }
