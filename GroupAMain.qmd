@@ -14,9 +14,14 @@ library(tidycensus)
 library(jsonlite)
 ```
 
-# API Call
+### Next, write a helper function to take what is returned by GET() and turn it into a nice tibble. 
+######  ??? idk what this means
 
-### TODO: 
+
+
+### API Call
+
+##### TODO: 
 Data processing: 
 Data cleaning:
 Subsetting data.
@@ -62,8 +67,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   
   #Decoding data
   pums_df <- fromJSON(rawToChar(pums_fetch$content))
-  pums_tibble <-as_tibble(pums_df)
-  
+  pums_tibble <- as_tibble(pums_df)
   #TODO: Clean data.  Fix column names etc...
   #TODO: Subset data for geography
   
@@ -87,3 +91,8 @@ Testing exception cases/output:
 Pums_APIdata(2009)
 Pums_APIdata(2012)  
 ```
+
+###  Lastly, write a function that allows the user to specify multiple years of survey data (and all the other
+### options above)
+
+
