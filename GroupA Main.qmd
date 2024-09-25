@@ -15,7 +15,7 @@ library(jsonlite)
 
 # API Call
 
-### todo: append variables to api url
+### api call
 
 ```{r, include=TRUE}
 Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="ALL",Opt_subset){
@@ -26,7 +26,7 @@ Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_varia
   cat_variables<-toupper(cat_variables)
   geography<-toupper(geography)
   #Adding num/cat variables to our url
-  variables_url<-paste(num_variables,cat_variables,sep=",")
+  variables_url<-paste(c(num_variables,cat_variables),collapse=",")
   #Base URL w/ year variable
   base_pums_url <-paste("https://api.census.gov/data/",year,"/acs/acs1/pums?get=",variables_url,sep="")
   #Adding geography to URL
@@ -49,7 +49,7 @@ Pums_API_Query <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_varia
 }
 ```
 
-Showing exception cases:
+Testing exception cases:
 
 ```{r, echo=TRUE}
 Pums_API_Query(2009)
