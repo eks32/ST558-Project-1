@@ -39,8 +39,31 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
     print("Invalid Year.  Acceptable year range: 2010-2022.")
     return()
     }
-  #TODO: add error checking for numeric/categorical/geography
   
+  #Numeric Variable check
+  if (any(!num_variables %in% c("AGEP","GASP","JWAP","JWDP","JWMNP","PWGTP"))){
+    print("Invalid Numeric Variable")
+    return()
+    }
+  #if PWGTP is the only variable, return error.
+  else if((length(num_variables) == 1 && num_variables == "PWGTP")){
+    print("Need another numerical variable other than PWGTP")
+    return()
+    }
+  #if PWGTP not in set, adds it
+  else if(!("PWGTP" %in% num_variables)){
+    num_variables <-c(num_variables,"PWGTP")
+  }
+  
+  #Categorical Variable Check
+  #TODO: add error checking for categorical
+  
+  #Geography Check
+  if (any(!geography %in% c("ALL", "REGION", "DIVISION", "STATE"))){
+    print("Invalid Geography Variable: Choose from ALL,REGION,DIVISION,or STATE.")
+    return()
+  }
+
   
   #API key here:
   API_key<-"2b989c8e8efa3003c17e6eb0ca728a968e04a441" 
@@ -65,7 +88,9 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   #API Fetch:
   pums_fetch <- httr::GET(full_url)
   
-  #Decoding data
+  #Decoding data: 
+  #TODO: Need to use helper function here to do this part:
+  
   pums_df <- fromJSON(rawToChar(pums_fetch$content))
   pums_tibble <- as_tibble(pums_df)
   #TODO: Clean data.  Fix column names etc...
@@ -89,7 +114,10 @@ Testing exception cases/output:
 
 ```{r, echo=TRUE}
 Pums_APIdata(2009)
-Pums_APIdata(2012)  
+Pums_APIdata(2012)
+Pums_APIdata(2012,num_variables="pwgtp")
+#Pums_APIdata(2012,num_variables ="agep")
+Pums_APIdata(2012,num_variables="Agep",geography = "City")
 ```
 
 ###  Lastly, write a function that allows the user to specify multiple years of survey data (and all the other
