@@ -41,7 +41,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
     }
   
   #Numeric Variable check
-  if (any(!num_variables %in% c("AGEP","GASP","JWAP","JWDP","JWMNP","PWGTP"))){
+  if (!num_variables %in% c("AGEP","GASP","JWAP","JWDP","JWMNP","PWGTP")){
     print("Invalid Numeric Variable")
     return()
     }
@@ -59,7 +59,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   #TODO: add error checking for categorical
   
   #Geography Check
-  if (any(!geography %in% c("ALL", "REGION", "DIVISION", "STATE"))){
+  if (!geography %in% c("ALL", "REGION", "DIVISION", "STATE")){
     print("Invalid Geography Variable: Choose from ALL,REGION,DIVISION,or STATE.")
     return()
   }
@@ -111,12 +111,11 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
 ```
 
 Testing exception cases/output:
-
 ```{r, echo=TRUE}
 Pums_APIdata(2009)
-Pums_APIdata(2012)
+#Pums_APIdata(2012)
 Pums_APIdata(2012,num_variables="pwgtp")
-#Pums_APIdata(2012,num_variables ="agep")
+Pums_APIdata(2012,num_variables ="agep")
 Pums_APIdata(2012,num_variables="Agep",geography = "City")
 ```
 
