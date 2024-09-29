@@ -265,7 +265,7 @@ Pums_multiYearData <- function(years = 2022, num_variables = c("AGEP", "PWGTP"),
 ```
 
 ```{r}
-multi_year_data <- Pums_multiYearData(years = c(2022,2021,2019))
+multi_year_data <- Pums_multiYearData(years = c(2022,2021,2019), num_variables = c("AGEP", "PWGTP","JWAP"))
 multi_year_data
 
 ```
