@@ -24,11 +24,56 @@ library(jsonlite)
 
 ```{r}
 convert_to_tibble <- function(response) {
-  json_content <- jsonlite::fromJSON(rawToChar(response$content))
-  tibble::as_tibble(json_content[-1, ]) |>
+  json_content <- fromJSON(rawToChar(response$content))
+  as_tibble(json_content[-1, ]) |>
     setNames(json_content[1, ])
 }
 
+```
+
+```{r}
+get_time <- function(variable) {
+  url <- paste0("https://api.census.gov/data/2022/acs/acs1/pums/variables/", variable, ".json")
+  response <- GET(url)
+  
+  if (status_code(response) != 200) {
+    stop("error for: ", variable)
+  }
+  
+  temp_list <- fromJSON(rawToChar(response$content))
+  time_info <- temp_list$values$item
+  time_catg_info <- time_info[sort(names(time_info))]
+  
+  return(time_catg_info)
+}
+
+convert_time_code <- function(code, time_catg_info) {
+  if (code %in% names(time_catg_info)) {
+    # extract the time range as a string
+    time_range <- time_catg_info[[code]]
+    time_parts <- strsplit(time_range, " to ")[[1]]
+    time_parts <- gsub("a.m.", "AM", time_parts)
+    time_parts <- gsub("p.m.", "PM", time_parts)
+    start_time <- strptime(time_parts[1], format = "%I:%M %p")
+    end_time <- strptime(time_parts[2], format = "%I:%M %p")
+    
+    # calc the middle of the time period
+    if (!is.na(start_time) && !is.na(end_time)) {
+      middle_time <- start_time + as.difftime(difftime(end_time, start_time, units = "mins") / 2, units = "mins")
+      return(as.POSIXct(middle_time, format = "%Y-%m-%d %H:%M:%S"))
+    } else {
+      return(NA)
+    }
+  } else {
+    return(NA)
+  }
+}
+
+```
+
+```{r}
+typeof(convert_time_code("055", get_time("JWAP")))
+# get_time("JWAP")
 ```
 
 ### API Call
@@ -76,7 +121,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   
   # cat variable choice check
   # changed as if should receive True of False
-  valid_cat_vars <- c("FER", "HHL", "HISPEED", "JWAP", "JWDP", "JWTRNS", "SCH", "SCHL", "SEX")
+  valid_cat_vars <- c("FER", "HHL", "HISPEED", "JWTRNS", "SCH", "SCHL", "SEX")
   if (!all(cat_variables %in% valid_cat_vars)) {
     stop("Invalid categorical variable(s) specified. Choose from: ", paste(valid_cat_vars, collapse = ", "))
   }
@@ -127,8 +172,49 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
 
   pums_tibble <- convert_to_tibble(pums_fetch)
   #TODO: Clean data.  Fix column names etc...
+  
   #TODO: Subset data for geography
   # I think you already did this subset while api request
+  
+  # convert numeric and time Variables
+  valid_time_vars <- c("JWAP", "JWDP")
+  for (col in colnames(pums_tibble)) {
+    if (col %in% num_variables && !col %in% valid_time_vars) {
+      # Convert to numeric
+      pums_tibble[[col]] <- as.numeric(pums_tibble[[col]])
+    } else if(col %in% valid_time_vars){
+      pums_tibble[[col]] <- sprintf("%03d", as.numeric(pums_tibble[[col]]))
+    }
+  }
+  
+  # Convert JWAP and JWDP to Time
+  if ("JWAP" %in% colnames(pums_tibble)) {
+    pums_tibble$JWAP <- sapply(pums_tibble$JWAP, convert_time_code, time_catg_info = get_time("JWAP"))
+    pums_tibble$JWAP <- as.POSIXct(pums_tibble$JWAP)
+      }
+
+  if ("JWDP" %in% colnames(pums_tibble)) {
+      pums_tibble$JWDP <- sapply(pums_tibble$JWDP, convert_time_code, time_catg_info = get_time("JWDP"))
+      pums_tibble$JWDP <- as.POSIXct(pums_tibble$JWDP)
+  }
+
+  
+  # cat variables to factors
+  factor_levels <- list(
+    FER = c("0", "1", "2"),
+    HHL = c("0", "1", "2", "3", "4", "5"),
+    HISPEED = c("0", "1", "2"),
+    JWTRNS = c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"), # changed to remove pre-zero from each value
+    SCH = c("0", "1", "2", "3"),
+    SEX = c("1", "2")
+  )
+  
+  for (col in colnames(pums_tibble)) {
+    if (col %in% names(factor_levels)) {
+      # Convert to factor with specified levels
+      pums_tibble[[col]] <- factor(pums_tibble[[col]], levels = factor_levels[[col]])
+    }
+  }
   
   #Diagonostics: delete later
   print(paste("API URL:",full_url))
@@ -152,6 +238,11 @@ Pums_APIdata(2009)
 Pums_APIdata(2012,num_variables="pwgtp")
 Pums_APIdata(2012,num_variables ="agep")
 Pums_APIdata(2012,num_variables="Agep",geography = "City")
+```
+
+```{r}
+test <- Pums_APIdata(year = 2022, num_variables = c("AGEP", "JWAP", "JWDP"),cat_variables =c("SEX"))
+test
 ```
 
 ### Lastly, write a function that allows the user to specify multiple years of survey data (and all the other
