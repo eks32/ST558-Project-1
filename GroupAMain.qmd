@@ -3,6 +3,8 @@ title: "ST558 Project 1: Group A"
 author: "Eric Song & Jay Thakur"
 format: html
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
 *Loading required libraries, include = FALSE.*
@@ -14,21 +16,29 @@ library(tidycensus)
 library(jsonlite)
 ```
 
-### Next, write a helper function to take what is returned by GET() and turn it into a nice tibble. 
-######  ??? idk what this means
+### Next, write a helper function to take what is returned by GET() and turn it into a nice tibble.
 
+###### ??? idk what this means
 
+##### I think something like this. I called this function in the end of api_fun
+
+```{r}
+convert_to_tibble <- function(response) {
+  json_content <- jsonlite::fromJSON(rawToChar(response$content))
+  tibble::as_tibble(json_content[-1, ]) |>
+    setNames(json_content[1, ])
+}
+
+```
 
 ### API Call
 
-##### TODO: 
-Data processing: 
-Data cleaning:
-Subsetting data.
-Will add narrative on sunday.  
+##### TODO:
+
+Data processing: Data cleaning: Subsetting data. Will add narrative on sunday.
 
 ```{r}
-Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="ALL",Opt_subset){
+Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="ALL",Opt_subset=NULL){
   #Automatically capitalize our variables
   num_variables<-toupper(num_variables)
   cat_variables<-toupper(cat_variables)
@@ -41,27 +51,42 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
     }
   
   #Numeric Variable check
-  if (!num_variables %in% c("AGEP","GASP","JWAP","JWDP","JWMNP","PWGTP")){
-    print("Invalid Numeric Variable")
-    return()
-    }
+  # changed as if should receive True of False
+  valid_numeric_vars <- c("AGEP", "GASP", "GRPIP", "JWAP", "JWDP", "JWMNP", "PWGTP")
+  if (!all(num_variables %in% valid_numeric_vars)) {
+    stop("Invalid Numeric Variable(s). Choose from: ", paste(valid_numeric_vars, collapse = ", "))
+  }
+  
   #if PWGTP is the only variable, return error.
-  else if((length(num_variables) == 1 && num_variables == "PWGTP")){
+  if((length(num_variables) == 1 && num_variables == "PWGTP")){
     print("Need another numerical variable other than PWGTP")
     return()
-    }
+  }
+  
   #if PWGTP not in set, adds it
-  else if(!("PWGTP" %in% num_variables)){
+  if(!("PWGTP" %in% num_variables)){
     num_variables <-c(num_variables,"PWGTP")
   }
   
   #Categorical Variable Check
-  #TODO: add error checking for categorical
-  
-  #Geography Check
-  if (!geography %in% c("ALL", "REGION", "DIVISION", "STATE")){
-    print("Invalid Geography Variable: Choose from ALL,REGION,DIVISION,or STATE.")
+  if((length(cat_variables) == 0)){
+    print("Need at least one categorical variable")
     return()
+  }
+  
+  # cat variable choice check
+  # changed as if should receive True of False
+  valid_cat_vars <- c("FER", "HHL", "HISPEED", "JWAP", "JWDP", "JWTRNS", "SCH", "SCHL", "SEX")
+  if (!all(cat_variables %in% valid_cat_vars)) {
+    stop("Invalid categorical variable(s) specified. Choose from: ", paste(valid_cat_vars, collapse = ", "))
+  }
+  
+  
+  # Geography Check
+  # changed as if should receive True of False
+  valid_geography <- c("ALL", "REGION", "DIVISION", "STATE")
+  if (!geography %in% valid_geography) {
+    stop("Invalid Geography Variable. Choose from: ", paste(valid_geography, collapse = ", "))
   }
 
   
@@ -73,28 +98,37 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   variables_url<-paste(c(num_variables,cat_variables),collapse=",")
   
   #Base URL w/ year variable
-  base_pums_url <-paste("https://api.census.gov/data/",year,"/acs/acs1/pums?get=",variables_url,sep="")
+  base_pums_url <-paste0("https://api.census.gov/data/",year,"/acs/acs1/pums?get=",variables_url)
   
-  #Adding geography to URL
-  if (geography == "ALL"){
+  if (!is.null(Opt_subset)) {
+      #Adding geography to URL
+      if (geography == "ALL"){
+        full_url <- paste(base_pums_url,"&SCHL=24&key=",API_key,sep="")}
+        else if (geography == "REGION"){
+          full_url <- paste(base_pums_url,"&for=region:*&SCHL=24&key=",API_key,sep="")}
+        else if (geography == "DIVISION"){
+          full_url <- paste(base_pums_url,"for=division:*&SCHL=24&key=",API_key,sep="")}
+        else if (geography == "STATE"){
+          full_url <- paste(base_pums_url,"&for=state:*&SCHL=24&key=",API_key,sep="")}
+    } else {
     full_url <- paste(base_pums_url,"&SCHL=24&key=",API_key,sep="")}
-    else if (geography == "REGION"){
-      full_url <- paste(base_pums_url,"&for=region:*&SCHL=24&key=",API_key,sep="")}
-    else if (geograph == "DIVISION"){
-      full_url <- paste(base_pums_url,"for=division:*&SCHL=24&key=",API_key,sep="")}
-    else if (geography == "STATE"){
-      full_url <- paste(base_pums_url,"&for=state:*&SCHL=24&key=",API_key,sep="")}
+
   
   #API Fetch:
   pums_fetch <- httr::GET(full_url)
   
+  # Check for a successful response
+  if (httr::status_code(pums_fetch) != 200) {
+    stop("Failed to retrieve data. Check the API URL and parameters.")
+  }
+  
   #Decoding data: 
   #TODO: Need to use helper function here to do this part:
-  
-  pums_df <- fromJSON(rawToChar(pums_fetch$content))
-  pums_tibble <- as_tibble(pums_df)
+
+  pums_tibble <- convert_to_tibble(pums_fetch)
   #TODO: Clean data.  Fix column names etc...
   #TODO: Subset data for geography
+  # I think you already did this subset while api request
   
   #Diagonostics: delete later
   print(paste("API URL:",full_url))
@@ -111,6 +145,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
 ```
 
 Testing exception cases/output:
+
 ```{r, echo=TRUE}
 Pums_APIdata(2009)
 #Pums_APIdata(2012)
@@ -119,7 +154,27 @@ Pums_APIdata(2012,num_variables ="agep")
 Pums_APIdata(2012,num_variables="Agep",geography = "City")
 ```
 
-###  Lastly, write a function that allows the user to specify multiple years of survey data (and all the other
+### Lastly, write a function that allows the user to specify multiple years of survey data (and all the other
+
 ### options above)
 
+```{r}
+Pums_multiYearData <- function(years = 2022, num_variables = c("AGEP", "PWGTP"), 
+                               cat_variables = "SEX", geography = "ALL", Opt_subset = NULL) {
+  all_data <- purrr::map_dfr(years, ~ {
+    year_data <- Pums_APIdata(year = .x, num_variables = num_variables, 
+                              cat_variables = cat_variables, geography = geography, 
+                              Opt_subset = Opt_subset)
+    year_data$YEAR <- .x
+    return(year_data)
+  })
+  
+  return(all_data)
+}
+```
 
+```{r}
+multi_year_data <- Pums_multiYearData(years = c(2022,2021,2019))
+multi_year_data
+
+```
