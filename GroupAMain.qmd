@@ -13,8 +13,6 @@ library(httr)
 library(tidycensus)
 library(jsonlite)
 library(ggplot2)
-#library(quantreg)
-# install.packages("quantreg")
 ```
 
 #### For this project, we structured our workflow around the central task of making API calls to the U.S. Census PUMS data. After discussing the details of the project and its goals and divided our tasks into the following:
@@ -279,7 +277,7 @@ test <- Pums_APIdata(year = 2022, num_variables = c("AGEP"),cat_variables =c("SE
 
 Filtered by state '01' (Alabama)
 ```{r}
-test
+unique(test$state)
 ```
 
 ### Multi Year Function

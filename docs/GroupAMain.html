@@ -465,22 +465,9 @@ from: ALL, REGION, DIVISION, STATE</code></pre>
 </div>
 <p>Filtered by state ‘01’ (Alabama)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(test<span class="sc">$</span>state)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 51,580 × 4
-    AGEP PWGTP SEX    state
-   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;  &lt;chr&gt;
- 1    58    38 MALE   01   
- 2    60   239 FEMALE 01   
- 3    61    67 MALE   01   
- 4    59    69 FEMALE 01   
- 5    43    71 FEMALE 01   
- 6    10    59 FEMALE 01   
- 7    73    61 MALE   01   
- 8    71    70 FEMALE 01   
- 9    68    22 MALE   01   
-10    80    20 FEMALE 01   
-# ℹ 51,570 more rows</code></pre>
+<pre><code>[1] "01"</code></pre>
 </div>
 </div>
 </section>
@@ -616,9 +603,8 @@ $SEX_counts
 <div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(test, <span class="at">cat_var =</span> <span class="st">"SEX"</span>, <span class="at">num_var =</span> <span class="st">"AGEP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: Computation failed in `stat_boxplot()`.
-Caused by error in `loadNamespace()`:
-! namespace 'Matrix' 1.5-4 is already loaded, but &gt;= 1.6.0 is required</code></pre>
+<pre><code>Warning in .recacheSubclasses(def@className, def, env): undefined subclass
+"ndiMatrix" of class "replValueSp"; definition not updated</code></pre>
 </div>
 <div class="cell-output-display">
 <div>
