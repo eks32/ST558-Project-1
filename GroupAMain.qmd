@@ -368,6 +368,7 @@ census_summary
 
 ### Plotting variables
 We also wanted to visualize the data. Jay wrote the plot.census() function, which generates box plots for numeric variables grouped by categorical variables. 
+
     -   Example: plot.census(tibble,cat_var="SEX",num_var="AGEP")
 
 ```{r}
