@@ -4,9 +4,7 @@ author: "Eric Song & Jay Thakur"
 format: html
 editor: visual
 editor_options: 
- chunk_output_type: console
 ---
-
 *Loading required libraries, include = FALSE.*
 
 ```{r, include=FALSE}
@@ -80,13 +78,9 @@ convert_time_code <- function(code, time_catg_info) {
     return(NA)
   }
 }
-
-```
-
-
-```{r}
-typeof(convert_time_code("055", get_time("JWAP")))
-get_time("JWAP")
+#Test:
+#typeof(convert_time_code("055", get_time("JWAP")))
+#get_time("JWAP")
 ```
 
 ### Designing the API:
@@ -133,7 +127,8 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   # changed by Jay as it should receive True of False
   valid_numeric_vars <- c("AGEP", "GASP", "GRPIP", "JWAP", "JWDP", "JWMNP", "PWGTP")
   if (!all(num_variables %in% valid_numeric_vars)) {
-    stop("Invalid Numeric Variable(s). Choose from: ", paste(valid_numeric_vars, collapse = ", "))
+    warning("Invalid Numeric Variable(s). Choose from: ", paste(valid_numeric_vars, collapse = ", "))
+    return()
   }
   
   #if PWGTP is the only variable, return error.
@@ -157,7 +152,8 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   # changed by Jay as if should receive True of False
   valid_cat_vars <- c("FER", "HHL", "HISPEED", "JWTRNS", "SCH", "SCHL", "SEX")
   if (!all(cat_variables %in% valid_cat_vars)) {
-    stop("Invalid categorical variable(s) specified. Choose from: ", paste(valid_cat_vars, collapse = ", "))
+    warning("Invalid categorical variable(s) specified. Choose from: ", paste(valid_cat_vars, collapse = ", "))
+    return()
   }
   
   
@@ -165,7 +161,8 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   # changed by Jay as if should receive True of False
   valid_geography <- c("ALL", "REGION", "DIVISION", "STATE")
   if (!geography %in% valid_geography) {
-    stop("Invalid Geography Variable. Choose from: ", paste(valid_geography, collapse = ", "))
+    warning("Invalid Geography Variable. Choose from: ", paste(valid_geography, collapse = ", "))
+    return()
   }
 
   
@@ -263,19 +260,24 @@ for (col in colnames(pums_tibble)) {
 }
 ```
 
-Testing exception cases/output:
+### Testing exception cases/output:
 ```{r, echo=TRUE}
+#Invalid Year:
 Pums_APIdata(2009)
-Pums_APIdata(2012)
+#If PWGTP is the only variable:
 Pums_APIdata(2012,num_variables="pwgtp")
+#PWGTP being added if it's not chosen: 
 Pums_APIdata(2012,num_variables ="agep")
-# Pums_APIdata(2012,num_variables="Agep",geography = "City")
+#Testing invalid geographic region:
+Pums_APIdata(geography="city")
 ```
 
 Testing Subset option:
 ```{r}
 test <- Pums_APIdata(year = 2022, num_variables = c("AGEP"),cat_variables =c("SEX"), geography = "STATE", Opt_subset = '01')
 ```
+
+Filtered by state '01' (Alabama)
 ```{r}
 test
 ```
@@ -301,12 +303,12 @@ Pums_multiYearData <- function(years = 2022, num_variables = c("AGEP", "PWGTP"),
 Testing Multi-Year function:
 
 ```{r}
-multi_year_data <- Pums_multiYearData(years = c(2022,2023), num_variables = c("AGEP", "PWGTP","JWAP"))
-multi_year_data
+multi_year_data <- Pums_multiYearData(years = c(2021,2022), num_variables = c("AGEP", "PWGTP","JWAP"))
+unique(multi_year_data$YEAR)
 ```
 
 ### Summary function
-Cleans up our tibble with column proper names for our variables and filtering factors like Sex. It also returns a summary with the mean/std/counts of our variables.
+Cleans up our tibble with column proper names for our variables. It also returns a summary with the mean/std/counts of our variables.
 
 
 ```{r}
