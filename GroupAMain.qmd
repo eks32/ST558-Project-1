@@ -83,9 +83,10 @@ convert_time_code <- function(code, time_catg_info) {
 
 ```
 
+
 ```{r}
-# typeof(convert_time_code("055", get_time("JWAP")))
-# get_time("JWAP")
+typeof(convert_time_code("055", get_time("JWAP")))
+get_time("JWAP")
 ```
 
 ### Designing the API:
@@ -202,13 +203,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   }
   
   #Decoding data: 
-  #TODO: Need to use helper function here to do this part:
-
   pums_tibble <- convert_to_tibble(pums_fetch)
-  #TODO: Clean data.  Fix column names etc...
-  
-  #TODO: Subset data for geography
-  # I think you already did this subset while api request
   
   # # added by Jay to convert numeric and time Variables
   valid_time_vars <- c("JWAP", "JWDP")
@@ -254,7 +249,7 @@ for (col in colnames(pums_tibble)) {
 
 
   
-  #Diagonostics: delete later
+  #Debug checker:
   print(paste("API URL:",full_url))
   print("Numeric Variables:")
   print(num_variables)
@@ -262,29 +257,26 @@ for (col in colnames(pums_tibble)) {
   print(cat_variables)
   print(paste("Geography:",geography))
   
-  class(pums_tibble) <- c("census", class(pums_tibble))
-  
   #Returns tibble
+  class(pums_tibble) <- c("census", class(pums_tibble))
   return(pums_tibble)
 }
 ```
 
 Testing exception cases/output:
-
 ```{r, echo=TRUE}
-# Pums_APIdata(2009)
-# #Pums_APIdata(2012)
-# Pums_APIdata(2012,num_variables="pwgtp")
-# Pums_APIdata(2012,num_variables ="agep")
+Pums_APIdata(2009)
+Pums_APIdata(2012)
+Pums_APIdata(2012,num_variables="pwgtp")
+Pums_APIdata(2012,num_variables ="agep")
 # Pums_APIdata(2012,num_variables="Agep",geography = "City")
 ```
 
+Testing Subset option:
 ```{r}
 test <- Pums_APIdata(year = 2022, num_variables = c("AGEP"),cat_variables =c("SEX"), geography = "STATE", Opt_subset = '01')
 ```
-
 ```{r}
-# class(test)
 test
 ```
 
@@ -302,15 +294,15 @@ Pums_multiYearData <- function(years = 2022, num_variables = c("AGEP", "PWGTP"),
     year_data$YEAR <- .x
     return(year_data)
   })
-  
   return(all_data)
 }
 ```
 
-```{r}
-multi_year_data <- Pums_multiYearData(years = c(2022), num_variables = c("AGEP", "PWGTP","JWAP"))
-multi_year_data
+Testing Multi-Year function:
 
+```{r}
+multi_year_data <- Pums_multiYearData(years = c(2022,2023), num_variables = c("AGEP", "PWGTP","JWAP"))
+multi_year_data
 ```
 
 ### Summary function
