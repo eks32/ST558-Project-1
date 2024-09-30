@@ -429,16 +429,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 47,819 × 4
     AGEP PWGTP SEX    state
    &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;  &lt;chr&gt;
- 1    74   184 MALE   1    
- 2    33   210 MALE   1    
- 3    68    31 FEMALE 1    
- 4    44    62 MALE   1    
- 5    42    61 MALE   1    
- 6    13    38 FEMALE 1    
- 7    12    38 FEMALE 1    
- 8    11    41 MALE   1    
- 9    20   288 MALE   1    
-10    86    52 FEMALE 1    
+ 1    59    81 FEMALE 1    
+ 2    60    99 MALE   1    
+ 3    41    50 MALE   1    
+ 4    42    42 FEMALE 1    
+ 5    22    51 FEMALE 1    
+ 6    12    78 FEMALE 1    
+ 7    83   217 FEMALE 1    
+ 8    18   529 MALE   1    
+ 9    38    31 MALE   1    
+10    38    50 FEMALE 1    
 # ℹ 47,809 more rows</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Testing invalid geographic region:</span></span>
@@ -599,7 +599,7 @@ $SEX_counts
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> cat_var, <span class="at">y =</span> num_var, <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Boxplot of"</span>, num_var, <span class="st">"by"</span>, cat_var))</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Boxplot of Sex vs Age of Patient.</p>
+<p>Boxplot of Age of Patient vs Sex.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(test, <span class="at">cat_var =</span> <span class="st">"SEX"</span>, <span class="at">num_var =</span> <span class="st">"AGEP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
