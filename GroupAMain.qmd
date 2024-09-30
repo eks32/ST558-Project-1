@@ -281,6 +281,7 @@ unique(test$state)
 
 ### Multi Year Function
 Using pums_multiYearData, this function loops through the specified years, queries the API for each year, and combines the results into a single tibble.
+
     -   Example: Pums_multiYearData(years=c(2021,2022))
 
 ```{r}
@@ -307,6 +308,7 @@ unique(multi_year_data$YEAR)
 
 ### Summary function
 Once the data was cleaned and transformed, the next step was to generate a summary function. Jay developed the summary.census() function, which provided weighted means, standard deviations, and counts for both numerical and categorical variables.
+
     -   Example: Summary.census(tibble)
 
 
@@ -394,4 +396,4 @@ plot.census(test, cat_var = "SEX", num_var = "AGEP")
 
 ### Conclusion
 
-Through the combination of dynamic API calls, data cleaning, summarization, and visualization, we created a system for analyzing Census PUMS data.   
+Through the combination of dynamic API calls, data cleaning, summarization, and visualization, we created a system for analyzing Census PUMS data. This approach allows for flexible querying of data based on user-defined parameters, automatic transformation of raw data into a usable format, and the ability to generate meaningful insights through both statistical summaries and visual representations. This design can furthermore be adapted for different projects in the future.
