@@ -209,21 +209,25 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
 
   
   # # added by Jay to convert cat variables to factors
-  factor_levels <- list(
-    FER = c("0", "1", "2"),
-    HHL = c("0", "1", "2", "3", "4", "5"),
-    HISPEED = c("0", "1", "2"),
-    JWTRNS = c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"), # changed to remove pre-zero from each value
-    SCH = c("0", "1", "2", "3"),
-    SEX = c("1", "2")
+  factor_labels <- list(
+    FER = c("N/A", "Yes", "No"),
+    HHL = c("N/A", "English Only", "Spanish", "Other Indo-European languages", "Asian and Pacific Island Languages", "Other Languages"),
+    HISPEED = c("N/A", "Yes", "No"),
+    JWTRNS = c("N/A", "Car, truck or van", "Bus", "Subway or elevated rail", "Long distance train or commuter rail", 
+               "Light rail, street car or trolley", "Ferryboat", "Taxicab", "Motorcycle", "Bicycle", "Walked", 
+               "Worked from home", "Other method"),
+    SCH = c("N/A", "No, has not attended in the last 3 months", 
+            "Yes, public school or public college", "Yes, private school or college or home school"),
+    SEX = c("MALE", "FEMALE")
   )
-  
-  for (col in colnames(pums_tibble)) {
-    if (col %in% names(factor_levels)) {
-      # Convert to factor with specified levels
-      pums_tibble[[col]] <- factor(pums_tibble[[col]], levels = factor_levels[[col]])
-    }
+
+for (col in colnames(pums_tibble)) {
+  if (col %in% names(factor_labels)) {
+    pums_tibble[[col]] <- factor(pums_tibble[[col]], levels = seq_along(factor_labels[[col]]), labels = factor_labels[[col]])
   }
+}
+
+
   
   #Diagonostics: delete later
   print(paste("API URL:",full_url))
