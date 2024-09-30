@@ -14,6 +14,8 @@ library(tidyverse)
 library(httr)
 library(tidycensus)
 library(jsonlite)
+library(ggplot2)
+# install.packages("quantreg")
 ```
 
 ### Next, write a helper function to take what is returned by GET() and turn it into a nice tibble.
@@ -72,7 +74,7 @@ convert_time_code <- function(code, time_catg_info) {
 ```
 
 ```{r}
-typeof(convert_time_code("055", get_time("JWAP")))
+# typeof(convert_time_code("055", get_time("JWAP")))
 # get_time("JWAP")
 ```
 
@@ -83,7 +85,7 @@ typeof(convert_time_code("055", get_time("JWAP")))
 Data processing: Data cleaning: Subsetting data. Will add narrative on sunday.
 
 ```{r}
-Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="ALL",Opt_subset=NULL){
+Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="STATE",Opt_subset="01"){
   #Automatically capitalize our variables
   num_variables<-toupper(num_variables)
   cat_variables<-toupper(cat_variables)
@@ -148,15 +150,15 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   if (!is.null(Opt_subset)) {
       #Adding geography to URL
       if (geography == "ALL"){
-        full_url <- paste(base_pums_url,"&SCHL=24&key=",API_key,sep="")}
+        full_url <- paste(base_pums_url,"&key=",API_key,sep="")}
         else if (geography == "REGION"){
-          full_url <- paste(base_pums_url,"&for=region:*&SCHL=24&key=",API_key,sep="")}
+          full_url <- paste(base_pums_url,"&for=region:",Opt_subset,"&key=",API_key,sep="")}
         else if (geography == "DIVISION"){
-          full_url <- paste(base_pums_url,"for=division:*&SCHL=24&key=",API_key,sep="")}
+          full_url <- paste(base_pums_url,"for=division:",Opt_subset,"&key=",API_key,sep="")}
         else if (geography == "STATE"){
-          full_url <- paste(base_pums_url,"&for=state:*&SCHL=24&key=",API_key,sep="")}
+          full_url <- paste(base_pums_url,"&for=state:",Opt_subset,"&key=",API_key,sep="")}
     } else {
-    full_url <- paste(base_pums_url,"&SCHL=24&key=",API_key,sep="")}
+    full_url <- paste(base_pums_url,"&key=",API_key,sep="")}
 
   
   #API Fetch:
@@ -224,6 +226,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   print(cat_variables)
   print(paste("Geography:",geography))
   
+  class(pums_tibble) <- c("census", class(pums_tibble))
   
   #Returns tibble
   return(pums_tibble)
@@ -241,7 +244,11 @@ Testing exception cases/output:
 ```
 
 ```{r}
-test <- Pums_APIdata(year = 2022, num_variables = c("AGEP", "JWAP", "JWDP"),cat_variables =c("SEX"))
+test <- Pums_APIdata(year = 2022, num_variables = c("AGEP"),cat_variables =c("SEX"), geography = "STATE", Opt_subset = '01')
+```
+
+```{r}
+# class(test)
 test
 ```
 
@@ -251,7 +258,7 @@ test
 
 ```{r}
 Pums_multiYearData <- function(years = 2022, num_variables = c("AGEP", "PWGTP"), 
-                               cat_variables = "SEX", geography = "ALL", Opt_subset = NULL) {
+                               cat_variables = "SEX", geography = "STATE", Opt_subset = "01") {
   all_data <- purrr::map_dfr(years, ~ {
     year_data <- Pums_APIdata(year = .x, num_variables = num_variables, 
                               cat_variables = cat_variables, geography = geography, 
@@ -265,7 +272,85 @@ Pums_multiYearData <- function(years = 2022, num_variables = c("AGEP", "PWGTP"),
 ```
 
 ```{r}
-multi_year_data <- Pums_multiYearData(years = c(2022,2021,2019), num_variables = c("AGEP", "PWGTP","JWAP"))
+multi_year_data <- Pums_multiYearData(years = c(2022), num_variables = c("AGEP", "PWGTP","JWAP"))
 multi_year_data
 
+```
+
+Summary function
+
+```{r}
+summary.census <- function(pums_tibble, numeric_vars = NULL, cat_vars = NULL) {
+  
+  # if user give null then get all 
+  if(is.null(numeric_vars)){
+    numeric_vars <- setdiff(names(pums_tibble)[sapply(pums_tibble, is.numeric)], "PWGTP")
+  }
+  if(is.null(cat_vars)){
+   cat_vars <- names(pums_tibble)[sapply(pums_tibble, is.factor)] 
+  }
+  
+  summary_list <- list()
+  weight_vector <- pums_tibble$PWGTP
+  
+  for (num_var in numeric_vars) {
+    num_vector <- pums_tibble[[num_var]]
+    
+    # added remove N/A
+    sample_mean <- sum(num_vector * weight_vector, na.rm = TRUE) / sum(weight_vector, na.rm = TRUE)
+    
+    # added remove N/A
+    sample_stddev <- sqrt(sum((num_vector^2) * weight_vector, na.rm = TRUE) / sum(weight_vector, na.rm = TRUE) - sample_mean^2)
+
+    summary_list[[paste0(num_var, "_mean")]] <- sample_mean
+    summary_list[[paste0(num_var, "_stddev")]] <- sample_stddev
+  }
+  
+  # Summarize categorical variables
+  for (cat_var in cat_vars) {
+    cat_vector <- pums_tibble[[cat_var]]
+    
+    # not sure about this. will ask on forum what is summary of cat variable
+    cat_summary <- pums_tibble %>%
+      group_by(!!sym(cat_var)) %>%
+      summarize(weighted_count = sum(PWGTP, na.rm = TRUE)) %>%
+      ungroup()
+    
+    summary_list[[paste0(cat_var, "_counts")]] <- cat_summary
+  }
+  
+  return(summary_list)
+}
+
+```
+
+```{r}
+census_summary <- summary.census(test)
+```
+
+```{r}
+census_summary
+```
+
+Plotting variables
+
+```{r}
+plot.census <- function(census_tibble, cat_var, num_var) {
+  if (!(cat_var %in% colnames(census_tibble))) {
+    stop(paste("Categorical variable", cat_var, "not found in the dataset."))
+  }
+  
+  if (!(num_var %in% colnames(census_tibble))) {
+    stop(paste("Numeric variable", num_var, "not found in the dataset."))
+  }
+  
+  # added labels and title
+  ggplot(census_tibble, aes(x = get(cat_var), y = get(num_var), weight = PWGTP)) +
+    geom_boxplot() + labs(x = cat_var, y = num_var, title = paste("Boxplot of", num_var, "by", cat_var))
+}
+
+```
+
+```{r}
+plot.census(test, cat_var = "SEX", num_var = "AGEP")
 ```
