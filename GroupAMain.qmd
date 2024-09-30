@@ -17,12 +17,12 @@ library(ggplot2)
 
 #### For this project, we structured our workflow around the central task of making API calls to the U.S. Census PUMS data. After discussing the details of the project and its goals and divided our tasks into the following:
 
--   Eric wrote the initial API call function, focusing on constructing the API URL based on user inputs such as the year, numeric variables, categorical variables, and geographic region.
+-   Eric wrote the initial API call function, focusing on constructing the API URL based on user inputs such as the year, numeric variables, categorical variables, and geographic region, and documentation.
 -   Jay brought his computer science expertise to this project by greatly improving our filtering/subset functions, writing the helper function to transform the JSON response into a tidy tibble along formatting factor levels, and writing the summary function to create visual plots for insights from the data.
 
 ### Helper Functions:
 
-Function to return json_content as a tibble.
+After retrieving the data, this helper function: convert_to_tibble will take raw JSON data and transform it into a tibble.  It will also set the column names.
 
 ```{r}
 # added by Jay for conversion of JSON GET to tibble
@@ -34,7 +34,7 @@ convert_to_tibble <- function(response) {
 
 ```
 
-Function to convert our data to a usable datetime format.
+This helper function are able to convert our time variables like JWAP and JWDP to datetime friendly formats for analysis.
 
 ```{r}
 # added by Jay for converting chr to datetime format
@@ -242,8 +242,6 @@ for (col in colnames(pums_tibble)) {
   }
 }
 
-
-  
   #Debug checker:
   print(paste("API URL:",full_url))
   print("Numeric Variables:")
@@ -259,6 +257,7 @@ for (col in colnames(pums_tibble)) {
 ```
 
 ### Testing exception cases/output:
+
 ```{r, echo=TRUE}
 #Invalid Year:
 Pums_APIdata(2009)
@@ -281,7 +280,8 @@ unique(test$state)
 ```
 
 ### Multi Year Function
-Using pums_multiYearData, you are able to specify a range of years and return a tibble.
+Using pums_multiYearData, this function loops through the specified years, queries the API for each year, and combines the results into a single tibble.
+    -   Example: Pums_multiYearData(years=c(2021,2022))
 
 ```{r}
 # added by Jay for calling single year API many times
@@ -306,7 +306,8 @@ unique(multi_year_data$YEAR)
 ```
 
 ### Summary function
-Cleans up our tibble with column proper names for our variables. It also returns a summary with the mean/std/counts of our variables.
+Once the data was cleaned and transformed, the next step was to generate a summary function. Jay developed the summary.census() function, which provided weighted means, standard deviations, and counts for both numerical and categorical variables.
+    -   Example: Summary.census(tibble)
 
 
 ```{r}
@@ -355,19 +356,17 @@ summary.census <- function(pums_tibble, numeric_vars = NULL, cat_vars = NULL) {
 
 ```
 
-```{r}
-census_summary <- summary.census(test)
-```
-
 
 Example of our summary function:
 
 ```{r}
+census_summary <- summary.census(test)
 census_summary
 ```
 
 ### Plotting variables
-Using plot.census able to generate a box plot by specifying variables in our tibble.
+We also wanted to visualize the data. Jay wrote the plot.census() function, which generates box plots for numeric variables grouped by categorical variables. 
+    -   Example: plot.census(tibble,cat_var="SEX",num_var="AGEP")
 
 ```{r}
 # added by Jay for plotting box plot
@@ -389,6 +388,10 @@ plot.census <- function(census_tibble, cat_var, num_var) {
 
 Boxplot of Age of Patient vs Sex.
 
-```{r}
+```{r, include=FALSE}
 plot.census(test, cat_var = "SEX", num_var = "AGEP")
 ```
+
+### Conclusion
+
+Through the combination of dynamic API calls, data cleaning, summarization, and visualization, we created a system for analyzing Census PUMS data.   
