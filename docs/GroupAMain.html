@@ -148,49 +148,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Jay brought his computer science expertise to this project by greatly improving our filtering/subset functions, writing the helper function to transform the JSON response into a tidy tibble along formatting factor levels, and writing the summary function to create visual plots for insights from the data.</li>
 </ul>
 </section>
-<section id="designing-the-api" class="level3">
-<h3 class="anchored" data-anchor-id="designing-the-api">Designing the API:</h3>
-<section id="using-examples-from-the-pums-website-to-we-were-able-to-understand-how-to-construct-our-api-call.-we-came-up-with-the-function" class="level4">
-<h4 class="anchored" data-anchor-id="using-examples-from-the-pums-website-to-we-were-able-to-understand-how-to-construct-our-api-call.-we-came-up-with-the-function">Using examples from the PUMs website to we were able to understand how to construct our API call. We came up with the function:</h4>
-<p>Pums_APIdata(year,numerical variables, categorical variables,geographic region)</p>
-</section>
-<section id="with-the-following-inputs-and-restrictions" class="level4">
-<h4 class="anchored" data-anchor-id="with-the-following-inputs-and-restrictions">With the following inputs and restrictions:</h4>
-<ul>
-<li>Year:
-<ul>
-<li>Will only accept any year between 2010-2022.</li>
-<li>Example: Pums_APIdata(year=2022)</li>
-</ul></li>
-<li>Numerical Variables (num_variables):
-<ul>
-<li>Valid Variables: AGEP, GASP,GRPIP,JWAP,JWDP,JWMNP,PWGTP</li>
-<li>Requires at least one numerical variable or will return an error(Not counting PWGTP)</li>
-<li>Will add PWGTP if not added.</li>
-<li>Example:Pums_APIdata(num_variables=“AGEP”)</li>
-</ul></li>
-<li>Categorical Variables (cat_variables):
-<ul>
-<li>Valid Variables: FER, HHL, HISPEED, JWTRNS, SCH, SCHL, SEX</li>
-<li>Requires at least one categorical variable or will return error.</li>
-<li>Example:Pums_APIdata(cat_variables=“SCH”)</li>
-</ul></li>
-<li>Geographic Region (geography):
-<ul>
-<li>Valid Variables: ALL, REGION, DIVISION, STATE</li>
-<li>If option state is chosen, Opt_Subset can be used to filter a specific state.</li>
-<li>Example: Pums_APIdata(geography=“STATE,Opt_Subset=”01”)</li>
-</ul></li>
-</ul>
+<section id="helper-functions" class="level3">
+<h3 class="anchored" data-anchor-id="helper-functions">Helper Functions:</h3>
+<p>Function to return json_content as a tibble.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Helper Function:</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for conversion of JSON GET to tibble</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>convert_to_tibble <span class="ot">&lt;-</span> <span class="cf">function</span>(response) {</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  json_content <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(response<span class="sc">$</span>content))</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(json_content[<span class="sc">-</span><span class="dv">1</span>, ]) <span class="sc">|&gt;</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setNames</span>(json_content[<span class="dv">1</span>, ])</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for conversion of JSON GET to tibble</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>convert_to_tibble <span class="ot">&lt;-</span> <span class="cf">function</span>(response) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  json_content <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(response<span class="sc">$</span>content))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(json_content[<span class="sc">-</span><span class="dv">1</span>, ]) <span class="sc">|&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setNames</span>(json_content[<span class="dv">1</span>, ])</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Function to convert our data to a usable datetime format.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for converting chr to datetime format</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>get_time <span class="ot">&lt;-</span> <span class="cf">function</span>(variable) {</span>
@@ -237,12 +206,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># get_time("JWAP")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="designing-the-api" class="level3">
+<h3 class="anchored" data-anchor-id="designing-the-api">Designing the API:</h3>
+<section id="using-examples-from-the-pums-website-to-we-were-able-to-understand-how-to-construct-our-api-call.-we-came-up-with-the-function" class="level4">
+<h4 class="anchored" data-anchor-id="using-examples-from-the-pums-website-to-we-were-able-to-understand-how-to-construct-our-api-call.-we-came-up-with-the-function">Using examples from the PUMs website to we were able to understand how to construct our API call. We came up with the function:</h4>
+<p>Pums_APIdata(year,numerical variables, categorical variables,geographic region)</p>
 </section>
-<section id="api-call" class="level3">
-<h3 class="anchored" data-anchor-id="api-call">API Call</h3>
-<section id="todo" class="level5">
-<h5 class="anchored" data-anchor-id="todo">TODO:</h5>
-<p>Data processing: Data cleaning: Subsetting data. Will add narrative on sunday.</p>
+<section id="with-the-following-inputs-and-restrictions" class="level4">
+<h4 class="anchored" data-anchor-id="with-the-following-inputs-and-restrictions">With the following inputs and restrictions:</h4>
+<ul>
+<li>Year:
+<ul>
+<li>Will only accept any year between 2010-2022.</li>
+<li>Example: Pums_APIdata(year=2022)</li>
+</ul></li>
+<li>Numerical Variables (num_variables):
+<ul>
+<li>Valid Variables: AGEP, GASP,GRPIP,JWAP,JWDP,JWMNP,PWGTP</li>
+<li>Requires at least one numerical variable or will return an error(Not counting PWGTP)</li>
+<li>Will add PWGTP if not added.</li>
+<li>Example:Pums_APIdata(num_variables=“AGEP”)</li>
+</ul></li>
+<li>Categorical Variables (cat_variables):
+<ul>
+<li>Valid Variables: FER, HHL, HISPEED, JWTRNS, SCH, SCHL, SEX</li>
+<li>Requires at least one categorical variable or will return error.</li>
+<li>Example:Pums_APIdata(cat_variables=“SCH”)</li>
+</ul></li>
+<li>Geographic Region (geography):
+<ul>
+<li>Valid Variables: ALL, REGION, DIVISION, STATE</li>
+<li>If option state is chosen, Opt_Subset can be used to filter a specific state.</li>
+<li>Example: Pums_APIdata(geography=“STATE,Opt_Subset=”01”)</li>
+</ul></li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># changed by Jay to add option for subsetting data</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Pums_APIdata <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">year=</span><span class="dv">2022</span>, <span class="at">num_variables =</span><span class="fu">c</span>(<span class="st">"AGEP"</span>,<span class="st">"PWGTP"</span>),<span class="at">cat_variables=</span><span class="st">"SEX"</span>,<span class="at">geography=</span><span class="st">"STATE"</span>,<span class="at">Opt_subset=</span><span class="st">"01"</span>){</span>
@@ -443,11 +440,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="lastly-write-a-function-that-allows-the-user-to-specify-multiple-years-of-survey-data-and-all-the-other" class="level3">
-<h3 class="anchored" data-anchor-id="lastly-write-a-function-that-allows-the-user-to-specify-multiple-years-of-survey-data-and-all-the-other">Lastly, write a function that allows the user to specify multiple years of survey data (and all the other</h3>
-</section>
-<section id="options-above" class="level3">
-<h3 class="anchored" data-anchor-id="options-above">options above)</h3>
+<section id="multi-year-function" class="level3">
+<h3 class="anchored" data-anchor-id="multi-year-function">Multi Year Function</h3>
+<p>Using pums_multiYearData, you are able to specify a range of years and return a tibble.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for calling single year API many times</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Pums_multiYearData <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">years =</span> <span class="dv">2022</span>, <span class="at">num_variables =</span> <span class="fu">c</span>(<span class="st">"AGEP"</span>, <span class="st">"PWGTP"</span>), </span>
@@ -491,7 +486,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 51,570 more rows</code></pre>
 </div>
 </div>
-<p>Summary function</p>
+</section>
+<section id="summary-function" class="level3">
+<h3 class="anchored" data-anchor-id="summary-function">Summary function</h3>
+<p>Cleans up our tibble with column proper names for our variables and filtering factors like Sex. It also returns a summary with the mean/std/counts of our variables.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for summarize num and cat variables</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>summary.census <span class="ot">&lt;-</span> <span class="cf">function</span>(pums_tibble, <span class="at">numeric_vars =</span> <span class="cn">NULL</span>, <span class="at">cat_vars =</span> <span class="cn">NULL</span>) {</span>
@@ -539,6 +537,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>census_summary <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Example of our summary function:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>census_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -556,7 +555,10 @@ $SEX_counts
 2 FEMALE        2612935</code></pre>
 </div>
 </div>
-<p>Plotting variables</p>
+</section>
+<section id="plotting-variables" class="level3">
+<h3 class="anchored" data-anchor-id="plotting-variables">Plotting variables</h3>
+<p>Using plot.census able to generate a box plot by specifying variables in our tibble.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for plotting box plot</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>plot.census <span class="ot">&lt;-</span> <span class="cf">function</span>(census_tibble, cat_var, num_var) {</span>
@@ -573,12 +575,13 @@ $SEX_counts
 <span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> cat_var, <span class="at">y =</span> num_var, <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Boxplot of"</span>, num_var, <span class="st">"by"</span>, cat_var))</span>
 <span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Boxplot of Sex vs Age of Patient.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(test, <span class="at">cat_var =</span> <span class="st">"SEX"</span>, <span class="at">num_var =</span> <span class="st">"AGEP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Computation failed in `stat_boxplot()`.
 Caused by error in `loadNamespace()`:
-! there is no package called 'quantreg'</code></pre>
+! namespace 'Matrix' 1.5-4 is already loaded, but &gt;= 1.6.0 is required</code></pre>
 </div>
 <div class="cell-output-display">
 <div>

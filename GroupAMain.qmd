@@ -4,7 +4,7 @@ author: "Eric Song & Jay Thakur"
 format: html
 editor: visual
 editor_options: 
-  chunk_output_type: console
+ chunk_output_type: console
 ---
 
 *Loading required libraries, include = FALSE.*
@@ -15,6 +15,7 @@ library(httr)
 library(tidycensus)
 library(jsonlite)
 library(ggplot2)
+#library(quantreg)
 # install.packages("quantreg")
 ```
 
@@ -23,33 +24,11 @@ library(ggplot2)
 -   Eric wrote the initial API call function, focusing on constructing the API URL based on user inputs such as the year, numeric variables, categorical variables, and geographic region.
 -   Jay brought his computer science expertise to this project by greatly improving our filtering/subset functions, writing the helper function to transform the JSON response into a tidy tibble along formatting factor levels, and writing the summary function to create visual plots for insights from the data.
 
-### Designing the API:
+### Helper Functions:
 
-#### Using examples from the PUMs website to we were able to understand how to construct our API call. We came up with the function:
-
-Pums_APIdata(year,numerical variables, categorical variables,geographic region)
-
-#### With the following inputs and restrictions:
-
--   Year:
-    -   Will only accept any year between 2010-2022.
-    -   Example: Pums_APIdata(year=2022)
--   Numerical Variables (num_variables):
-    -   Valid Variables: AGEP, GASP,GRPIP,JWAP,JWDP,JWMNP,PWGTP
-    -   Requires at least one numerical variable or will return an error(Not counting PWGTP)
-    -   Will add PWGTP if not added.
-    -   Example:Pums_APIdata(num_variables="AGEP")
--   Categorical Variables (cat_variables):
-    -   Valid Variables: FER, HHL, HISPEED, JWTRNS, SCH, SCHL, SEX
-    -   Requires at least one categorical variable or will return error.
-    -   Example:Pums_APIdata(cat_variables="SCH")
--   Geographic Region (geography):
-    -   Valid Variables: ALL, REGION, DIVISION, STATE
-    -   If option state is chosen, Opt_Subset can be used to filter a specific state.
-    -   Example: Pums_APIdata(geography="STATE,Opt_Subset="01") 
+Function to return json_content as a tibble.
 
 ```{r}
-#Helper Function:
 # added by Jay for conversion of JSON GET to tibble
 convert_to_tibble <- function(response) {
   json_content <- fromJSON(rawToChar(response$content))
@@ -58,6 +37,8 @@ convert_to_tibble <- function(response) {
 }
 
 ```
+
+Function to convert our data to a usable datetime format.
 
 ```{r}
 # added by Jay for converting chr to datetime format
@@ -107,11 +88,30 @@ convert_time_code <- function(code, time_catg_info) {
 # get_time("JWAP")
 ```
 
-### API Call
+### Designing the API:
 
-##### TODO:
+#### Using examples from the PUMs website to we were able to understand how to construct our API call. We came up with the function:
 
-Data processing: Data cleaning: Subsetting data. Will add narrative on sunday.
+Pums_APIdata(year,numerical variables, categorical variables,geographic region)
+
+#### With the following inputs and restrictions:
+
+-   Year:
+    -   Will only accept any year between 2010-2022.
+    -   Example: Pums_APIdata(year=2022)
+-   Numerical Variables (num_variables):
+    -   Valid Variables: AGEP, GASP,GRPIP,JWAP,JWDP,JWMNP,PWGTP
+    -   Requires at least one numerical variable or will return an error(Not counting PWGTP)
+    -   Will add PWGTP if not added.
+    -   Example:Pums_APIdata(num_variables="AGEP")
+-   Categorical Variables (cat_variables):
+    -   Valid Variables: FER, HHL, HISPEED, JWTRNS, SCH, SCHL, SEX
+    -   Requires at least one categorical variable or will return error.
+    -   Example:Pums_APIdata(cat_variables="SCH")
+-   Geographic Region (geography):
+    -   Valid Variables: ALL, REGION, DIVISION, STATE
+    -   If option state is chosen, Opt_Subset can be used to filter a specific state.
+    -   Example: Pums_APIdata(geography="STATE,Opt_Subset="01")
 
 ```{r}
 
@@ -288,9 +288,8 @@ test <- Pums_APIdata(year = 2022, num_variables = c("AGEP"),cat_variables =c("SE
 test
 ```
 
-### Lastly, write a function that allows the user to specify multiple years of survey data (and all the other
-
-### options above)
+### Multi Year Function
+Using pums_multiYearData, you are able to specify a range of years and return a tibble.
 
 ```{r}
 # added by Jay for calling single year API many times
@@ -314,7 +313,9 @@ multi_year_data
 
 ```
 
-Summary function
+### Summary function
+Cleans up our tibble with column proper names for our variables and filtering factors like Sex. It also returns a summary with the mean/std/counts of our variables.
+
 
 ```{r}
 # added by Jay for summarize num and cat variables
@@ -366,11 +367,15 @@ summary.census <- function(pums_tibble, numeric_vars = NULL, cat_vars = NULL) {
 census_summary <- summary.census(test)
 ```
 
+
+Example of our summary function:
+
 ```{r}
 census_summary
 ```
 
-Plotting variables
+### Plotting variables
+Using plot.census able to generate a box plot by specifying variables in our tibble.
 
 ```{r}
 # added by Jay for plotting box plot
@@ -389,6 +394,8 @@ plot.census <- function(census_tibble, cat_var, num_var) {
 }
 
 ```
+
+Boxplot of Sex vs Age of Patient.
 
 ```{r}
 plot.census(test, cat_var = "SEX", num_var = "AGEP")
