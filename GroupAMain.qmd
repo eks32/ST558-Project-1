@@ -18,13 +18,38 @@ library(ggplot2)
 # install.packages("quantreg")
 ```
 
-### Next, write a helper function to take what is returned by GET() and turn it into a nice tibble.
+#### For this project, we structured our workflow around the central task of making API calls to the U.S. Census PUMS data. After discussing the details of the project and its goals and divided our tasks into the following:
 
-###### ??? idk what this means
+-   Eric wrote the initial API call function, focusing on constructing the API URL based on user inputs such as the year, numeric variables, categorical variables, and geographic region.
+-   Jay brought his computer science expertise to this project by greatly improving our filtering/subset functions, writing the helper function to transform the JSON response into a tidy tibble along formatting factor levels, and writing the summary function to create visual plots for insights from the data.
 
-##### I think something like this. I called this function in the end of api_fun
+### Designing the API:
+
+#### Using examples from the PUMs website to we were able to understand how to construct our API call. We came up with the function:
+
+Pums_APIdata(year,numerical variables, categorical variables,geographic region)
+
+#### With the following inputs and restrictions:
+
+-   Year:
+    -   Will only accept any year between 2010-2022.
+    -   Example: Pums_APIdata(year=2022)
+-   Numerical Variables (num_variables):
+    -   Valid Variables: AGEP, GASP,GRPIP,JWAP,JWDP,JWMNP,PWGTP
+    -   Requires at least one numerical variable or will return an error(Not counting PWGTP)
+    -   Will add PWGTP if not added.
+    -   Example:Pums_APIdata(num_variables="AGEP")
+-   Categorical Variables (cat_variables):
+    -   Valid Variables: FER, HHL, HISPEED, JWTRNS, SCH, SCHL, SEX
+    -   Requires at least one categorical variable or will return error.
+    -   Example:Pums_APIdata(cat_variables="SCH")
+-   Geographic Region (geography):
+    -   Valid Variables: ALL, REGION, DIVISION, STATE
+    -   If option state is chosen, Opt_Subset can be used to filter a specific state.
+    -   Example: Pums_APIdata(geography="STATE,Opt_Subset="01") 
 
 ```{r}
+#Helper Function:
 # added by Jay for conversion of JSON GET to tibble
 convert_to_tibble <- function(response) {
   json_content <- fromJSON(rawToChar(response$content))
