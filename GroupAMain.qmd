@@ -25,6 +25,7 @@ library(ggplot2)
 ##### I think something like this. I called this function in the end of api_fun
 
 ```{r}
+# added by Jay for conversion of JSON GET to tibble
 convert_to_tibble <- function(response) {
   json_content <- fromJSON(rawToChar(response$content))
   as_tibble(json_content[-1, ]) |>
@@ -34,10 +35,12 @@ convert_to_tibble <- function(response) {
 ```
 
 ```{r}
+# added by Jay for converting chr to datetime format
 get_time <- function(variable) {
   url <- paste0("https://api.census.gov/data/2022/acs/acs1/pums/variables/", variable, ".json")
   response <- GET(url)
   
+  # added by Jay for error handling
   if (status_code(response) != 200) {
     stop("error for: ", variable)
   }
@@ -49,6 +52,7 @@ get_time <- function(variable) {
   return(time_catg_info)
 }
 
+# added by Jay for converting chr to datetime format
 convert_time_code <- function(code, time_catg_info) {
   if (code %in% names(time_catg_info)) {
     # extract the time range as a string
@@ -85,6 +89,8 @@ convert_time_code <- function(code, time_catg_info) {
 Data processing: Data cleaning: Subsetting data. Will add narrative on sunday.
 
 ```{r}
+
+# changed by Jay to add option for subsetting data
 Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variables="SEX",geography="STATE",Opt_subset="01"){
   #Automatically capitalize our variables
   num_variables<-toupper(num_variables)
@@ -97,8 +103,8 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
     return()
     }
   
-  #Numeric Variable check
-  # changed as if should receive True of False
+  # Numeric Variable check
+  # changed by Jay as it should receive True of False
   valid_numeric_vars <- c("AGEP", "GASP", "GRPIP", "JWAP", "JWDP", "JWMNP", "PWGTP")
   if (!all(num_variables %in% valid_numeric_vars)) {
     stop("Invalid Numeric Variable(s). Choose from: ", paste(valid_numeric_vars, collapse = ", "))
@@ -122,7 +128,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   }
   
   # cat variable choice check
-  # changed as if should receive True of False
+  # changed by Jay as if should receive True of False
   valid_cat_vars <- c("FER", "HHL", "HISPEED", "JWTRNS", "SCH", "SCHL", "SEX")
   if (!all(cat_variables %in% valid_cat_vars)) {
     stop("Invalid categorical variable(s) specified. Choose from: ", paste(valid_cat_vars, collapse = ", "))
@@ -130,7 +136,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   
   
   # Geography Check
-  # changed as if should receive True of False
+  # changed by Jay as if should receive True of False
   valid_geography <- c("ALL", "REGION", "DIVISION", "STATE")
   if (!geography %in% valid_geography) {
     stop("Invalid Geography Variable. Choose from: ", paste(valid_geography, collapse = ", "))
@@ -147,6 +153,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   #Base URL w/ year variable
   base_pums_url <-paste0("https://api.census.gov/data/",year,"/acs/acs1/pums?get=",variables_url)
   
+  # added by Jay to subsetting the data
   if (!is.null(Opt_subset)) {
       #Adding geography to URL
       if (geography == "ALL"){
@@ -178,7 +185,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   #TODO: Subset data for geography
   # I think you already did this subset while api request
   
-  # convert numeric and time Variables
+  # # added by Jay to convert numeric and time Variables
   valid_time_vars <- c("JWAP", "JWDP")
   for (col in colnames(pums_tibble)) {
     if (col %in% num_variables && !col %in% valid_time_vars) {
@@ -189,7 +196,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
     }
   }
   
-  # Convert JWAP and JWDP to Time
+  # # added by Jay for Convert JWAP and JWDP to Time
   if ("JWAP" %in% colnames(pums_tibble)) {
     pums_tibble$JWAP <- sapply(pums_tibble$JWAP, convert_time_code, time_catg_info = get_time("JWAP"))
     pums_tibble$JWAP <- as.POSIXct(pums_tibble$JWAP)
@@ -201,7 +208,7 @@ Pums_APIdata <- function(year=2022, num_variables =c("AGEP","PWGTP"),cat_variabl
   }
 
   
-  # cat variables to factors
+  # # added by Jay to convert cat variables to factors
   factor_levels <- list(
     FER = c("0", "1", "2"),
     HHL = c("0", "1", "2", "3", "4", "5"),
@@ -257,6 +264,7 @@ test
 ### options above)
 
 ```{r}
+# added by Jay for calling single year API many times
 Pums_multiYearData <- function(years = 2022, num_variables = c("AGEP", "PWGTP"), 
                                cat_variables = "SEX", geography = "STATE", Opt_subset = "01") {
   all_data <- purrr::map_dfr(years, ~ {
@@ -280,6 +288,7 @@ multi_year_data
 Summary function
 
 ```{r}
+# added by Jay for summarize num and cat variables
 summary.census <- function(pums_tibble, numeric_vars = NULL, cat_vars = NULL) {
   
   # if user give null then get all 
@@ -335,6 +344,7 @@ census_summary
 Plotting variables
 
 ```{r}
+# added by Jay for plotting box plot
 plot.census <- function(census_tibble, cat_var, num_var) {
   if (!(cat_var %in% colnames(census_tibble))) {
     stop(paste("Categorical variable", cat_var, "not found in the dataset."))
