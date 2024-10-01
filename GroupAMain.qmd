@@ -391,7 +391,7 @@ plot.census <- function(census_tibble, cat_var, num_var) {
 
 Boxplot of Age of Patient vs Sex.
 
-```{r, include=FALSE}
+```{r}
 plot.census(test, cat_var = "SEX", num_var = "AGEP")
 ```
 

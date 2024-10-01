@@ -427,16 +427,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 47,819 × 4
     AGEP PWGTP SEX    state
    &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;  &lt;chr&gt;
- 1    74   184 MALE   1    
- 2    33   210 MALE   1    
- 3    68    31 FEMALE 1    
- 4    44    62 MALE   1    
- 5    42    61 MALE   1    
- 6    13    38 FEMALE 1    
- 7    12    38 FEMALE 1    
- 8    11    41 MALE   1    
- 9    20   288 MALE   1    
-10    86    52 FEMALE 1    
+ 1    36    73 FEMALE 1    
+ 2    38    45 MALE   1    
+ 3    16    90 MALE   1    
+ 4    13    66 MALE   1    
+ 5    59    42 FEMALE 1    
+ 6    57    55 MALE   1    
+ 7    29    79 MALE   1    
+ 8    39   207 MALE   1    
+ 9    30   241 FEMALE 1    
+10    14   236 FEMALE 1    
 # ℹ 47,809 more rows</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Testing invalid geographic region:</span></span>
@@ -599,6 +599,20 @@ $SEX_counts
 <span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Boxplot of Age of Patient vs Sex.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(test, <span class="at">cat_var =</span> <span class="st">"SEX"</span>, <span class="at">num_var =</span> <span class="st">"AGEP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in .recacheSubclasses(def@className, def, env): undefined subclass
+"ndiMatrix" of class "replValueSp"; definition not updated</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GroupAMain_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="conclusion" class="level3">
 <h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
