@@ -261,35 +261,63 @@ for (col in colnames(pums_tibble)) {
 
 ### Testing exception cases/output:
 
+**Showing if user picks an Invalid Year.**
+
 ```{r, echo=TRUE}
-#Invalid Year:
 Pums_APIdata(2009)
-#If PWGTP is the only variable:
+```
+
+**Showing if PWGTP is selected as the only variable.**
+
+```{r}
 Pums_APIdata(2012,num_variables="pwgtp")
-#PWGTP being added if it's not chosen: 
+```
+
+**Showing if PWGTP is not in the variable list, it gets added.**
+
+```{r}
 Pums_APIdata(2012,num_variables ="agep")
-#Testing invalid geographic region:
+```
+
+
+**Showing if user picks an invalid geographic region:**
+
+```{r}
 Pums_APIdata(geography="city")
 ```
 
-Testing Subset option in "test":
+**Example dataset with the use of the Subset option.**
 
 ```{r}
 test <- Pums_APIdata(year = 2022, num_variables = c("AGEP"),cat_variables =c("SEX"), geography = "STATE", Opt_subset = '01')
 test
+```
+
+
+**Example dataset with multiple numerical/categorical variables.**
+
+```{r}
 #Showing multiple numerical/categorical variables
 test2 <- Pums_APIdata(year= 2022, num_variables = c("AGEP","GASP","JWDP"),cat_variables=c("SEX","HHL"))
 test2
 ```
 
-Filtered by state. '01' = (Alabama). 
-
-Showing that JWDP stores many unique variables (149) and showing a value (row 10000) where it's not "NA" (in datetime format). Also showing the factor levels for HHL.
+**Filtered by state. '01' = (Alabama). **
 
 ```{r}
 unique(test$state)
+```
+
+**Showing that JWDP stores many unique variables (149) and showing a value (row 10000) where it's not "NA" (in datetime format).**
+
+```{r}
 length(unique(test2$JWDP))
 test2$JWDP[10000]
+```
+
+**Showing HHL's unique factor levels.**
+
+```{r}
 unique(test2$HHL)
 ```
 
@@ -316,10 +344,10 @@ Pums_multiYearData <- function(years = 2022, num_variables = c("AGEP", "PWGTP"),
 }
 ```
 
-Testing Multi-Year function:
+**Showing the Multi-Year function:**
 
 ```{r}
-multi_year_data <- Pums_multiYearData(years = c(2021,2022), num_variables = c("AGEP", "PWGTP","JWAP"))
+multi_year_data <- Pums_multiYearData(years = c(2010:2014), num_variables = c("AGEP", "PWGTP","JWAP"))
 unique(multi_year_data$YEAR)
 ```
 
@@ -327,7 +355,7 @@ unique(multi_year_data$YEAR)
 
 Once the data was cleaned and transformed, the next step was to generate a summary function. Jay developed the summary.census() function, which provided weighted means, standard deviations, and counts for both numerical and categorical variables.
 
-```         
+```  
 -   Example: Summary.census(tibble)
 ```
 
@@ -377,14 +405,27 @@ summary.census <- function(pums_tibble, numeric_vars = NULL, cat_vars = NULL) {
 
 ```
 
-Examples of our summary function:
+**Examples of our summary function:**
 
 ```{r}
 census_summary <- summary.census(test)
 census_summary
+```
+
+
+**Summary using our dataset with multiple numerical/categorical variables.**
+
+```{r}
 #Showing multiple variables
 census_summary2 <- summary.census(test2)
 census_summary2
+```
+
+**Showing using multi-year data.**
+
+```{r}
+census_summary3 <- summary.census(multi_year_data)
+census_summary3
 ```
 
 ### Plotting variables
@@ -413,12 +454,15 @@ plot.census <- function(census_tibble, cat_var, num_var) {
 
 ```
 
-Boxplot of Age of Patient vs Sex.
-
-Boxplot 2 of Age of Patient vs Household Language.
+**Boxplot of Age of Patient vs Sex.**
 
 ```{r}
 plot.census(test, cat_var = "SEX", num_var = "AGEP")
+```
+
+**Boxplot 2 of Age of Patient vs Household Language.**
+
+```{r}
 plot.census(test2, cat_var = "HHL", num_var = "AGEP")
 ```
 
