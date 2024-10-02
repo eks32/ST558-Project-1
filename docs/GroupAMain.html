@@ -239,6 +239,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Example: Pums_APIdata(geography=“STATE,Opt_Subset=”01”)</li>
 </ul></li>
 </ul>
+<p>In addition, our data is then formatted properly in our tibble for factors such as SEX returning Male/Female as well for other categorical variables and JWAP/JWDP being in datetime format.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># changed by Jay to add option for subsetting data</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Pums_APIdata <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">year=</span><span class="dv">2022</span>, <span class="at">num_variables =</span><span class="fu">c</span>(<span class="st">"AGEP"</span>,<span class="st">"PWGTP"</span>),<span class="at">cat_variables=</span><span class="st">"SEX"</span>,<span class="at">geography=</span><span class="st">"STATE"</span>,<span class="at">Opt_subset=</span><span class="st">"01"</span>){</span>
@@ -427,16 +428,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 47,819 × 4
     AGEP PWGTP SEX    state
    &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;  &lt;chr&gt;
- 1    36    73 FEMALE 1    
- 2    38    45 MALE   1    
- 3    16    90 MALE   1    
- 4    13    66 MALE   1    
- 5    59    42 FEMALE 1    
- 6    57    55 MALE   1    
- 7    29    79 MALE   1    
- 8    39   207 MALE   1    
- 9    30   241 FEMALE 1    
-10    14   236 FEMALE 1    
+ 1    74   184 MALE   1    
+ 2    33   210 MALE   1    
+ 3    68    31 FEMALE 1    
+ 4    44    62 MALE   1    
+ 5    42    61 MALE   1    
+ 6    13    38 FEMALE 1    
+ 7    12    38 FEMALE 1    
+ 8    11    41 MALE   1    
+ 9    20   288 MALE   1    
+10    86    52 FEMALE 1    
 # ℹ 47,809 more rows</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Testing invalid geographic region:</span></span>
@@ -449,7 +450,7 @@ from: ALL, REGION, DIVISION, STATE</code></pre>
 <pre><code>NULL</code></pre>
 </div>
 </div>
-<p>Testing Subset option:</p>
+<p>Testing Subset option in “test”:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">Pums_APIdata</span>(<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">num_variables =</span> <span class="fu">c</span>(<span class="st">"AGEP"</span>),<span class="at">cat_variables =</span><span class="fu">c</span>(<span class="st">"SEX"</span>), <span class="at">geography =</span> <span class="st">"STATE"</span>, <span class="at">Opt_subset =</span> <span class="st">'01'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -460,12 +461,73 @@ from: ALL, REGION, DIVISION, STATE</code></pre>
 [1] "SEX"
 [1] "Geography: STATE"</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 51,580 × 4
+    AGEP PWGTP SEX    state
+   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;  &lt;chr&gt;
+ 1    85    69 FEMALE 01   
+ 2    51    22 MALE   01   
+ 3    36    45 FEMALE 01   
+ 4    74     4 MALE   01   
+ 5    49    47 MALE   01   
+ 6    31    38 MALE   01   
+ 7    76    13 FEMALE 01   
+ 8    60    38 MALE   01   
+ 9    35    66 MALE   01   
+10    72    31 FEMALE 01   
+# ℹ 51,570 more rows</code></pre>
 </div>
-<p>Filtered by state ‘01’ (Alabama)</p>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Showing multiple numerical/categorical variables</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>test2 <span class="ot">&lt;-</span> <span class="fu">Pums_APIdata</span>(<span class="at">year=</span> <span class="dv">2022</span>, <span class="at">num_variables =</span> <span class="fu">c</span>(<span class="st">"AGEP"</span>,<span class="st">"GASP"</span>,<span class="st">"JWDP"</span>),<span class="at">cat_variables=</span><span class="fu">c</span>(<span class="st">"SEX"</span>,<span class="st">"HHL"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "API URL: https://api.census.gov/data/2022/acs/acs1/pums?get=AGEP,GASP,JWDP,PWGTP,SEX,HHL&amp;for=state:01&amp;key=2b989c8e8efa3003c17e6eb0ca728a968e04a441"
+[1] "Numeric Variables:"
+[1] "AGEP"  "GASP"  "JWDP"  "PWGTP"
+[1] "Categorical Variables:"
+[1] "SEX" "HHL"
+[1] "Geography: STATE"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>test2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 51,580 × 7
+    AGEP  GASP JWDP   PWGTP SEX    HHL   state
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dttm&gt; &lt;dbl&gt; &lt;fct&gt;  &lt;fct&gt; &lt;chr&gt;
+ 1    85     3 NA        69 FEMALE &lt;NA&gt;  01   
+ 2    51     3 NA        22 MALE   &lt;NA&gt;  01   
+ 3    36     3 NA        45 FEMALE &lt;NA&gt;  01   
+ 4    74     3 NA         4 MALE   &lt;NA&gt;  01   
+ 5    49     3 NA        47 MALE   &lt;NA&gt;  01   
+ 6    31     3 NA        38 MALE   &lt;NA&gt;  01   
+ 7    76     3 NA        13 FEMALE &lt;NA&gt;  01   
+ 8    60     3 NA        38 MALE   &lt;NA&gt;  01   
+ 9    35     3 NA        66 MALE   &lt;NA&gt;  01   
+10    72     3 NA        31 FEMALE &lt;NA&gt;  01   
+# ℹ 51,570 more rows</code></pre>
+</div>
+</div>
+<p>Filtered by state. ‘01’ = (Alabama).</p>
+<p>Showing that JWDP stores many unique variables (149) and showing a value (row 10000) where it’s not “NA” (in datetime format). Also showing the factor levels for HHL.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(test<span class="sc">$</span>state)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(test<span class="sc">$</span>state)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "01"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(test2<span class="sc">$</span>JWDP))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 149</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>test2<span class="sc">$</span>JWDP[<span class="dv">10000</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      019 
+"2024-10-01 05:02:00 EDT" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(test2<span class="sc">$</span>HHL)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] &lt;NA&gt;                               N/A                               
+[3] English Only                       Spanish                           
+[5] Other Indo-European languages      Asian and Pacific Island Languages
+6 Levels: N/A English Only Spanish ... Other Languages</code></pre>
 </div>
 </div>
 </section>
@@ -474,22 +536,22 @@ from: ALL, REGION, DIVISION, STATE</code></pre>
 <p>Using pums_multiYearData, this function loops through the specified years, queries the API for each year, and combines the results into a single tibble.</p>
 <pre><code>-   Example: Pums_multiYearData(years=c(2021,2022))</code></pre>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for calling single year API many times</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>Pums_multiYearData <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">years =</span> <span class="dv">2022</span>, <span class="at">num_variables =</span> <span class="fu">c</span>(<span class="st">"AGEP"</span>, <span class="st">"PWGTP"</span>), </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">cat_variables =</span> <span class="st">"SEX"</span>, <span class="at">geography =</span> <span class="st">"STATE"</span>, <span class="at">Opt_subset =</span> <span class="st">"01"</span>) {</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  all_data <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(years, <span class="sc">~</span> {</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    year_data <span class="ot">&lt;-</span> <span class="fu">Pums_APIdata</span>(<span class="at">year =</span> .x, <span class="at">num_variables =</span> num_variables, </span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">cat_variables =</span> cat_variables, <span class="at">geography =</span> geography, </span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>                              <span class="at">Opt_subset =</span> Opt_subset)</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    year_data<span class="sc">$</span>YEAR <span class="ot">&lt;-</span> .x</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(year_data)</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(all_data)</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for calling single year API many times</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>Pums_multiYearData <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">years =</span> <span class="dv">2022</span>, <span class="at">num_variables =</span> <span class="fu">c</span>(<span class="st">"AGEP"</span>, <span class="st">"PWGTP"</span>), </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">cat_variables =</span> <span class="st">"SEX"</span>, <span class="at">geography =</span> <span class="st">"STATE"</span>, <span class="at">Opt_subset =</span> <span class="st">"01"</span>) {</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  all_data <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(years, <span class="sc">~</span> {</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    year_data <span class="ot">&lt;-</span> <span class="fu">Pums_APIdata</span>(<span class="at">year =</span> .x, <span class="at">num_variables =</span> num_variables, </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">cat_variables =</span> cat_variables, <span class="at">geography =</span> geography, </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                              <span class="at">Opt_subset =</span> Opt_subset)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    year_data<span class="sc">$</span>YEAR <span class="ot">&lt;-</span> .x</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(year_data)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(all_data)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Testing Multi-Year function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>multi_year_data <span class="ot">&lt;-</span> <span class="fu">Pums_multiYearData</span>(<span class="at">years =</span> <span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>), <span class="at">num_variables =</span> <span class="fu">c</span>(<span class="st">"AGEP"</span>, <span class="st">"PWGTP"</span>,<span class="st">"JWAP"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>multi_year_data <span class="ot">&lt;-</span> <span class="fu">Pums_multiYearData</span>(<span class="at">years =</span> <span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>), <span class="at">num_variables =</span> <span class="fu">c</span>(<span class="st">"AGEP"</span>, <span class="st">"PWGTP"</span>,<span class="st">"JWAP"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "API URL: https://api.census.gov/data/2021/acs/acs1/pums?get=AGEP,PWGTP,JWAP,SEX&amp;for=state:01&amp;key=2b989c8e8efa3003c17e6eb0ca728a968e04a441"
 [1] "Numeric Variables:"
@@ -504,7 +566,7 @@ from: ALL, REGION, DIVISION, STATE</code></pre>
 [1] "SEX"
 [1] "Geography: STATE"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(multi_year_data<span class="sc">$</span>YEAR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(multi_year_data<span class="sc">$</span>YEAR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2021 2022</code></pre>
 </div>
@@ -515,53 +577,53 @@ from: ALL, REGION, DIVISION, STATE</code></pre>
 <p>Once the data was cleaned and transformed, the next step was to generate a summary function. Jay developed the summary.census() function, which provided weighted means, standard deviations, and counts for both numerical and categorical variables.</p>
 <pre><code>-   Example: Summary.census(tibble)</code></pre>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for summarize num and cat variables</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>summary.census <span class="ot">&lt;-</span> <span class="cf">function</span>(pums_tibble, <span class="at">numeric_vars =</span> <span class="cn">NULL</span>, <span class="at">cat_vars =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if user give null then get all </span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(numeric_vars)){</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    numeric_vars <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(pums_tibble)[<span class="fu">sapply</span>(pums_tibble, is.numeric)], <span class="st">"PWGTP"</span>)</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(cat_vars)){</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>   cat_vars <span class="ot">&lt;-</span> <span class="fu">names</span>(pums_tibble)[<span class="fu">sapply</span>(pums_tibble, is.factor)] </span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  summary_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  weight_vector <span class="ot">&lt;-</span> pums_tibble<span class="sc">$</span>PWGTP</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (num_var <span class="cf">in</span> numeric_vars) {</span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    num_vector <span class="ot">&lt;-</span> pums_tibble[[num_var]]</span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># added remove N/A</span></span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>    sample_mean <span class="ot">&lt;-</span> <span class="fu">sum</span>(num_vector <span class="sc">*</span> weight_vector, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sum</span>(weight_vector, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># added remove N/A</span></span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>    sample_stddev <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>((num_vector<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> weight_vector, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sum</span>(weight_vector, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">-</span> sample_mean<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    summary_list[[<span class="fu">paste0</span>(num_var, <span class="st">"_mean"</span>)]] <span class="ot">&lt;-</span> sample_mean</span>
-<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    summary_list[[<span class="fu">paste0</span>(num_var, <span class="st">"_stddev"</span>)]] <span class="ot">&lt;-</span> sample_stddev</span>
-<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Summarize categorical variables</span></span>
-<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (cat_var <span class="cf">in</span> cat_vars) {</span>
-<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>    cat_vector <span class="ot">&lt;-</span> pums_tibble[[cat_var]]</span>
-<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># not sure about this. will ask on forum what is summary of cat variable</span></span>
-<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>    cat_summary <span class="ot">&lt;-</span> pums_tibble <span class="sc">%&gt;%</span></span>
-<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(<span class="sc">!!</span><span class="fu">sym</span>(cat_var)) <span class="sc">%&gt;%</span></span>
-<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarize</span>(<span class="at">weighted_count =</span> <span class="fu">sum</span>(PWGTP, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>()</span>
-<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>    summary_list[[<span class="fu">paste0</span>(cat_var, <span class="st">"_counts"</span>)]] <span class="ot">&lt;-</span> cat_summary</span>
-<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(summary_list)</span>
-<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for summarize num and cat variables</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>summary.census <span class="ot">&lt;-</span> <span class="cf">function</span>(pums_tibble, <span class="at">numeric_vars =</span> <span class="cn">NULL</span>, <span class="at">cat_vars =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if user give null then get all </span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(numeric_vars)){</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    numeric_vars <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(pums_tibble)[<span class="fu">sapply</span>(pums_tibble, is.numeric)], <span class="st">"PWGTP"</span>)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(cat_vars)){</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>   cat_vars <span class="ot">&lt;-</span> <span class="fu">names</span>(pums_tibble)[<span class="fu">sapply</span>(pums_tibble, is.factor)] </span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  summary_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>  weight_vector <span class="ot">&lt;-</span> pums_tibble<span class="sc">$</span>PWGTP</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (num_var <span class="cf">in</span> numeric_vars) {</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    num_vector <span class="ot">&lt;-</span> pums_tibble[[num_var]]</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># added remove N/A</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>    sample_mean <span class="ot">&lt;-</span> <span class="fu">sum</span>(num_vector <span class="sc">*</span> weight_vector, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sum</span>(weight_vector, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># added remove N/A</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>    sample_stddev <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>((num_vector<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> weight_vector, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sum</span>(weight_vector, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">-</span> sample_mean<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>    summary_list[[<span class="fu">paste0</span>(num_var, <span class="st">"_mean"</span>)]] <span class="ot">&lt;-</span> sample_mean</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>    summary_list[[<span class="fu">paste0</span>(num_var, <span class="st">"_stddev"</span>)]] <span class="ot">&lt;-</span> sample_stddev</span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Summarize categorical variables</span></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (cat_var <span class="cf">in</span> cat_vars) {</span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>    cat_vector <span class="ot">&lt;-</span> pums_tibble[[cat_var]]</span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># not sure about this. will ask on forum what is summary of cat variable</span></span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>    cat_summary <span class="ot">&lt;-</span> pums_tibble <span class="sc">%&gt;%</span></span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(<span class="sc">!!</span><span class="fu">sym</span>(cat_var)) <span class="sc">%&gt;%</span></span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarize</span>(<span class="at">weighted_count =</span> <span class="fu">sum</span>(PWGTP, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>()</span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>    summary_list[[<span class="fu">paste0</span>(cat_var, <span class="st">"_counts"</span>)]] <span class="ot">&lt;-</span> cat_summary</span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(summary_list)</span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Example of our summary function:</p>
+<p>Examples of our summary function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>census_summary <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(test)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>census_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>census_summary <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(test)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>census_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$AGEP_mean
 [1] 39.75216
@@ -576,6 +638,40 @@ $SEX_counts
 1 MALE          2461361
 2 FEMALE        2612935</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Showing multiple variables</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>census_summary2 <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(test2)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>census_summary2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$AGEP_mean
+[1] 39.75216
+
+$AGEP_stddev
+[1] 23.44001
+
+$GASP_mean
+[1] 45.45949
+
+$GASP_stddev
+[1] 127.2117
+
+$SEX_counts
+# A tibble: 2 × 2
+  SEX    weighted_count
+  &lt;fct&gt;           &lt;dbl&gt;
+1 MALE          2461361
+2 FEMALE        2612935
+
+$HHL_counts
+# A tibble: 6 × 2
+  HHL                                weighted_count
+  &lt;fct&gt;                                       &lt;dbl&gt;
+1 N/A                                       4529046
+2 English Only                               245952
+3 Spanish                                     62172
+4 Other Indo-European languages               64319
+5 Asian and Pacific Island Languages          31488
+6 &lt;NA&gt;                                       141319</code></pre>
+</div>
 </div>
 </section>
 <section id="plotting-variables" class="level3">
@@ -583,24 +679,25 @@ $SEX_counts
 <p>We also wanted to visualize the data. Jay wrote the plot.census() function, which generates box plots for numeric variables grouped by categorical variables.</p>
 <pre><code>-   Example: plot.census(tibble,cat_var="SEX",num_var="AGEP")</code></pre>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for plotting box plot</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>plot.census <span class="ot">&lt;-</span> <span class="cf">function</span>(census_tibble, cat_var, num_var) {</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>(cat_var <span class="sc">%in%</span> <span class="fu">colnames</span>(census_tibble))) {</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="fu">paste</span>(<span class="st">"Categorical variable"</span>, cat_var, <span class="st">"not found in the dataset."</span>))</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>(num_var <span class="sc">%in%</span> <span class="fu">colnames</span>(census_tibble))) {</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="fu">paste</span>(<span class="st">"Numeric variable"</span>, num_var, <span class="st">"not found in the dataset."</span>))</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># added labels and title</span></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(census_tibble, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">get</span>(cat_var), <span class="at">y =</span> <span class="fu">get</span>(num_var), <span class="at">weight =</span> PWGTP)) <span class="sc">+</span></span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> cat_var, <span class="at">y =</span> num_var, <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Boxplot of"</span>, num_var, <span class="st">"by"</span>, cat_var))</span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># added by Jay for plotting box plot</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>plot.census <span class="ot">&lt;-</span> <span class="cf">function</span>(census_tibble, cat_var, num_var) {</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>(cat_var <span class="sc">%in%</span> <span class="fu">colnames</span>(census_tibble))) {</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="fu">paste</span>(<span class="st">"Categorical variable"</span>, cat_var, <span class="st">"not found in the dataset."</span>))</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>(num_var <span class="sc">%in%</span> <span class="fu">colnames</span>(census_tibble))) {</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="fu">paste</span>(<span class="st">"Numeric variable"</span>, num_var, <span class="st">"not found in the dataset."</span>))</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># added labels and title</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(census_tibble, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">get</span>(cat_var), <span class="at">y =</span> <span class="fu">get</span>(num_var), <span class="at">weight =</span> PWGTP)) <span class="sc">+</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> cat_var, <span class="at">y =</span> num_var, <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Boxplot of"</span>, num_var, <span class="st">"by"</span>, cat_var))</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Boxplot of Age of Patient vs Sex.</p>
+<p>Boxplot 2 of Age of Patient vs Household Language.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(test, <span class="at">cat_var =</span> <span class="st">"SEX"</span>, <span class="at">num_var =</span> <span class="st">"AGEP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(test, <span class="at">cat_var =</span> <span class="st">"SEX"</span>, <span class="at">num_var =</span> <span class="st">"AGEP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in .recacheSubclasses(def@className, def, env): undefined subclass
 "ndiMatrix" of class "replValueSp"; definition not updated</code></pre>
@@ -609,6 +706,14 @@ $SEX_counts
 <div>
 <figure class="figure">
 <p><img src="GroupAMain_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(test2, <span class="at">cat_var =</span> <span class="st">"HHL"</span>, <span class="at">num_var =</span> <span class="st">"AGEP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GroupAMain_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

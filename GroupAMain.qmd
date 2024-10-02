@@ -5,6 +5,7 @@ format: html
 editor: visual
 editor_options: 
 ---
+
 *Loading required libraries, include = FALSE.*
 
 ```{r, include=FALSE}
@@ -22,7 +23,7 @@ library(ggplot2)
 
 ### Helper Functions:
 
-After retrieving the data, this helper function: convert_to_tibble will take raw JSON data and transform it into a tibble.  It will also set the column names.
+After retrieving the data, this helper function: convert_to_tibble will take raw JSON data and transform it into a tibble. It will also set the column names.
 
 ```{r}
 # added by Jay for conversion of JSON GET to tibble
@@ -105,6 +106,8 @@ Pums_APIdata(year,numerical variables, categorical variables,geographic region)
     -   Valid Variables: ALL, REGION, DIVISION, STATE
     -   If option state is chosen, Opt_Subset can be used to filter a specific state.
     -   Example: Pums_APIdata(geography="STATE,Opt_Subset="01")
+
+In addition, our data is then formatted properly in our tibble for factors such as SEX returning Male/Female as well for other categorical variables and JWAP/JWDP being in datetime format.
 
 ```{r}
 
@@ -269,20 +272,34 @@ Pums_APIdata(2012,num_variables ="agep")
 Pums_APIdata(geography="city")
 ```
 
-Testing Subset option:
+Testing Subset option in "test":
+
 ```{r}
 test <- Pums_APIdata(year = 2022, num_variables = c("AGEP"),cat_variables =c("SEX"), geography = "STATE", Opt_subset = '01')
+test
+#Showing multiple numerical/categorical variables
+test2 <- Pums_APIdata(year= 2022, num_variables = c("AGEP","GASP","JWDP"),cat_variables=c("SEX","HHL"))
+test2
 ```
 
-Filtered by state '01' (Alabama)
+Filtered by state. '01' = (Alabama). 
+
+Showing that JWDP stores many unique variables (149) and showing a value (row 10000) where it's not "NA" (in datetime format). Also showing the factor levels for HHL.
+
 ```{r}
 unique(test$state)
+length(unique(test2$JWDP))
+test2$JWDP[10000]
+unique(test2$HHL)
 ```
 
 ### Multi Year Function
+
 Using pums_multiYearData, this function loops through the specified years, queries the API for each year, and combines the results into a single tibble.
 
-    -   Example: Pums_multiYearData(years=c(2021,2022))
+```         
+-   Example: Pums_multiYearData(years=c(2021,2022))
+```
 
 ```{r}
 # added by Jay for calling single year API many times
@@ -307,10 +324,12 @@ unique(multi_year_data$YEAR)
 ```
 
 ### Summary function
+
 Once the data was cleaned and transformed, the next step was to generate a summary function. Jay developed the summary.census() function, which provided weighted means, standard deviations, and counts for both numerical and categorical variables.
 
-    -   Example: Summary.census(tibble)
-
+```         
+-   Example: Summary.census(tibble)
+```
 
 ```{r}
 # added by Jay for summarize num and cat variables
@@ -358,18 +377,23 @@ summary.census <- function(pums_tibble, numeric_vars = NULL, cat_vars = NULL) {
 
 ```
 
-
-Example of our summary function:
+Examples of our summary function:
 
 ```{r}
 census_summary <- summary.census(test)
 census_summary
+#Showing multiple variables
+census_summary2 <- summary.census(test2)
+census_summary2
 ```
 
 ### Plotting variables
-We also wanted to visualize the data. Jay wrote the plot.census() function, which generates box plots for numeric variables grouped by categorical variables. 
 
-    -   Example: plot.census(tibble,cat_var="SEX",num_var="AGEP")
+We also wanted to visualize the data. Jay wrote the plot.census() function, which generates box plots for numeric variables grouped by categorical variables.
+
+```         
+-   Example: plot.census(tibble,cat_var="SEX",num_var="AGEP")
+```
 
 ```{r}
 # added by Jay for plotting box plot
@@ -391,8 +415,11 @@ plot.census <- function(census_tibble, cat_var, num_var) {
 
 Boxplot of Age of Patient vs Sex.
 
+Boxplot 2 of Age of Patient vs Household Language.
+
 ```{r}
 plot.census(test, cat_var = "SEX", num_var = "AGEP")
+plot.census(test2, cat_var = "HHL", num_var = "AGEP")
 ```
 
 ### Conclusion
